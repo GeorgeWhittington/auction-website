@@ -19,7 +19,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'item_desc', 'item_price', 'item_sold']
+        fields = ['id', 'description', 'price', 'sold']
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
@@ -29,7 +29,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 class SetSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Set
-        fields = ['id', 'set_desc', 'set_price']
+        fields = ['id', 'description', 'price']
 
 class SetViewSet(viewsets.ModelViewSet):
     queryset = Set.objects.all()
