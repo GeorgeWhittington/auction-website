@@ -12,6 +12,9 @@ class Set(models.Model):
     class Meta:
         verbose_name_plural = "Sets"
 
+    def sold(self):
+        return bool(self.items.filter(sold_at__isnull=False).count())
+
 
 class Item(models.Model):
     description = models.CharField(max_length=128)
@@ -21,3 +24,6 @@ class Item(models.Model):
 
     def __str__(self):
         return self.description
+
+    def sold(self):
+        return bool(self.sold_at)
