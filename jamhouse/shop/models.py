@@ -21,9 +21,16 @@ class Item(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10)
     sold_at = models.DateTimeField(null=True, blank=True)
     sets = models.ManyToManyField("Set", blank=True)
+    repositories = models.ManyToManyField("Repository", blank=True)
 
     def __str__(self):
         return self.description
 
     def sold(self):
         return bool(self.sold_at)
+
+class Repository(models.Model):
+    class Meta:
+        verbose_name_plural = "repositories"
+    name = models.CharField(max_length=128)
+    items = models.ManyToManyField("Item", blank=True)

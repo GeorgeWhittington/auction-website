@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.db.models import Count, F, Q, Case, When, Value
 from django.utils.translation import ngettext
-from .models import Set, Item
+from .models import Set, Item, Repository
 
 # Filters
 class SoldFilter(admin.SimpleListFilter):
@@ -85,3 +85,6 @@ class ItemAdmin(admin.ModelAdmin):
             "%d items were successfully marked as sold",
             updated,
         ) % updated, messages.SUCCESS)
+
+
+admin.site.register(Repository)
