@@ -104,13 +104,13 @@ class Command(BaseCommand):
         Set.objects.all().delete()
         
         # Process items
-        self.import_items(f'{directory}\{ITEM_CSV_NAME}')
+        self.import_items(f'{directory}/{ITEM_CSV_NAME}')
 
         # Process Sets
-        self.import_sets(f'{directory}\{ITEM_CSV_SET_NAME}')
+        self.import_sets(f'{directory}/{ITEM_CSV_SET_NAME}')
 
         # Process Repositories
         for repo in ITEM_REPOSITORIES:
-            self.import_repository(repo['name'], f"{directory}\{repo['filepath']}")
+            self.import_repository(repo['name'], f"{directory}/{repo['filepath']}")
 
         
