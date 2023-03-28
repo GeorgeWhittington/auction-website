@@ -32,5 +32,9 @@ class Item(models.Model):
 class Repository(models.Model):
     class Meta:
         verbose_name_plural = "repositories"
+
     name = models.CharField(max_length=128)
     items = models.ManyToManyField("Item", through="Item_repositories", blank=True)
+
+    def __str__(self) -> str:
+        return self.name

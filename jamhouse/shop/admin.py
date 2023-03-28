@@ -36,6 +36,7 @@ class SoldSetFilter(SoldFilter):
         return queryset
 
 
+# Models
 @admin.register(Set)
 class SetAdmin(admin.ModelAdmin):
     list_display = ("id", "description", "set_price", "sold")
@@ -64,12 +65,12 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ("id", "description", "item_price", "sold_at")
     list_display_links = ("description",)
     list_filter = (SoldItemFilter,)
-    filter_horizontal = ("sets",)
+    filter_horizontal = ("sets", "repositories")
     fieldsets = (
         (None, {"fields": ("description", "price", "sold_at")}),
         ("Advanced options", {
             "classes": ("collapse",),
-            "fields": ("sets",)
+            "fields": ("sets", "repositories")
         })
     )
     actions = ("mark_item_sold",)
@@ -87,4 +88,8 @@ class ItemAdmin(admin.ModelAdmin):
         ) % updated, messages.SUCCESS)
 
 
-admin.site.register(Repository)
+@admin.register(Repository)
+class RepositoryAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    list_display_links = ("name",)
+    filter_horizontal = ("items",)
