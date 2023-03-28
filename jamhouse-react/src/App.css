@@ -1,0 +1,30 @@
+#root {
+    display: flex;
+    flex-direction: column;
+}
+
+#upper-header {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "logo login"
+        "logo search";
+}
+
+#logo {
+    grid-area: logo;
+    max-width: 500px;
+}
+
+#login-options {
+    grid-area: login;
+    justify-self: end;
+    align-self: center;
+}
+
+#search-box {
+    grid-area: search;
+    justify-self: end;
+    align-self: center;
+}
