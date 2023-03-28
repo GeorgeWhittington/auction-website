@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from shop.models import Item, Set
+from shop.models import Item, Set, Repository
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -35,11 +35,22 @@ class SetViewSet(viewsets.ModelViewSet):
     queryset = Set.objects.all()
     serializer_class = SetSerializer
 
+# Reposiories
+class RepositorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Repository
+        fields = ['id', 'name', 'items']
+
+class RepositoryViewSet(viewsets.ModelViewSet):
+    queryset = Repository.objects.all()
+    serializer_class = RepositorySerializer
+
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'items', ItemViewSet)
 router.register(r'sets', SetViewSet)
+router.register(r'repositories', RepositoryViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
