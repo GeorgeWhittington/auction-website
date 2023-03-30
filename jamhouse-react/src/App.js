@@ -1,30 +1,46 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { icon } from "@fortawesome/fontawesome-svg-core/import.macro"
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass, faBars } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
 
 import Home from "./components/Home";
 import Search from "./components/Search";
 import Item from "./components/Item";
 import Set from "./components/Set";
-
-function LoginLogoutRegister({ username }) {
-  if (username !== null) {
-    var options = <><a href="#">Welcome {username}!</a><a href="#">Logout</a></>;
-  } else {
-    var options = <><a href="#">Login</a><a href="#">Register</a></>;
-  }
-
-  return (
-    <div id="login-options">
-      {options}
-    </div>
-  )
-}
+import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
-  let username = null;
+  const [state, setState] = useState({
+    username: null,
+    menuHidden: true
+  });
+
+  function handleMenuPress(event) {
+    // Only accept Enter or Space keypresses
+    if (!(event.code === "Space" || event.code === "Enter")) {
+      return;
+    }
+    if (event.code === "Space") {
+      // Stop page scroll from pressing space
+      // event.stopPropagation();
+      event.preventDefault();
+    }
+    handleMenuClick();
+  }
+
+  function handleMenuClick() {
+    console.log("menu clicked");
+    if (window.innerWidth > 500) {
+      return;
+    }
+
+    setState(prevState => ({username: prevState.username, menuHidden: !prevState.menuHidden}))
+  }
+
+  useEffect(() => {
+    
+  })
 
   return (
     <Router>
@@ -32,7 +48,7 @@ function App() {
         <div id="upper-header">
           <img id="logo" src="./jam-house-logo.png"/>
           <div id="header-right">
-            <LoginLogoutRegister username={username} />
+            <LoginLogoutRegister username={state.username} />
             <div id="search-box">
               <input type="text" placeholder="Search"></input>
               <button><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
@@ -40,11 +56,11 @@ function App() {
           </div>
         </div>
         <nav id="lower-header">
-          <a href="#">About Us</a>
-          <a href="#">Locations</a>
-          <a href="#">Recently Sold</a>
-          <a href="#">Contact Us</a>
-
+          <div className="mobile-menu" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0"><FontAwesomeIcon icon={faBars} /></div>
+          <a href="#" className={state.menuHidden ? "hidden" : ""}>About Us</a>
+          <a href="#" className={state.menuHidden ? "hidden" : ""}>Locations</a>
+          <a href="#" className={state.menuHidden ? "hidden" : ""}>Recently Sold</a>
+          <a href="#" className={state.menuHidden ? "hidden" : ""}>Contact Us</a>
           {/* <Link to="/">Home</Link>
           <Link to="/search">Search</Link> */}
         </nav>
@@ -64,6 +80,11 @@ function App() {
           - View Repository
           */}
         </Routes>
+      </div>
+      <div id="footer">
+        <a href="#">Cookies</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
       </div>
     </Router>
   );
