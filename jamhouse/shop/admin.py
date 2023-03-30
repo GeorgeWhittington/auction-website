@@ -94,6 +94,9 @@ class RepositoryAdmin(admin.ModelAdmin):
     list_display_links = ("name",)
     filter_horizontal = ("items",)
 
+    def item_count(self, obj):
+        return obj.items.count()
+
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     pass
