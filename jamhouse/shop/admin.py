@@ -90,7 +90,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 @admin.register(Repository)
 class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("id", "name", "item_count")
     list_display_links = ("name",)
     filter_horizontal = ("items",)
 
