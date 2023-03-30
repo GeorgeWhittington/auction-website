@@ -22,6 +22,7 @@ class Item(models.Model):
     sold_at = models.DateTimeField(null=True, blank=True)
     sets = models.ManyToManyField("Set", blank=True)
     repositories = models.ManyToManyField("Repository", blank=True)
+    images = models.ManyToManyField("Image", blank=True)
 
     def __str__(self):
         return self.description
@@ -38,3 +39,10 @@ class Repository(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+class Image(models.Model):
+    alt = models.TextField(blank=True)
+    img = models.ImageField(upload_to="", blank=True)
+
+    def __str__(self) -> str:
+        return str(self.img)

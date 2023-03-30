@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.db.models import Count, F, Q, Case, When, Value
 from django.utils.translation import ngettext
-from .models import Set, Item, Repository
+from .models import Set, Item, Repository, Image
 
 # Filters
 class SoldFilter(admin.SimpleListFilter):
@@ -96,3 +96,7 @@ class RepositoryAdmin(admin.ModelAdmin):
 
     def item_count(self, obj):
         return obj.items.count()
+
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    pass
