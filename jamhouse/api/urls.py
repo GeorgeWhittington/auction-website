@@ -5,7 +5,7 @@ from rest_framework import routers, serializers, viewsets
 
 from shop.models import Item, Set, Repository, Image
 from api.search import Search
-from api.me import Me
+from api.views import LoginView, Me
 
 # Items
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -60,6 +60,7 @@ router.register(r'images', ImageViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('search', Search.as_view()),
+    path('login', LoginView.as_view()),
     path('me', Me.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
