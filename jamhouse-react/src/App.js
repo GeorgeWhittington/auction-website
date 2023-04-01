@@ -14,11 +14,10 @@ import Set from "./components/Set";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
-  // Once access-tokens are implemented, specify that cookie inside
-  // useCookies so that it changing triggers a re-render
-  const [cookies, setCookie] = useCookies();
+  // Specifying re-render when 'access-token' changes
+  const [cookies, setCookie] = useCookies(["access-token"]);
   const [state, setState] = useState({
-    username: null,
+    user: null,
     menuHidden: true
   });
 
@@ -41,24 +40,28 @@ function App() {
       return;
     }
 
-    setState(prevState => ({username: prevState.username, menuHidden: !prevState.menuHidden}))
+    setState(prevState => {
+      return {...prevState, menuHidden: !prevState.menuHidden}
+    });
   }
 
   useEffect(() => {
-    axios.get(api + "/me")
+    // TODO: Consider moving this logic elsewhere
+    if (cookies["access-token"] === null) {
+      if (state.user !== null) {
+        setState({...state, user: null});
+      }
+    } else {
+      axios.get(api + "/me", {headers: {"Authorization": `Token ${cookies["access-token"]}`}})
       .then(function (response) {
-        // handle success
-        console.log(response);
+        setState({...state, user: response.data});
+        console.log(response.data);
       })
       .catch(function (error) {
-        if (error.status === 401) {
-          // Not logged in, ignore
-          return;
-        }
-        // handle error
         console.log(error);
       });
-  })
+    }
+  }, [])  // Empty array ensures this only runs *once*
 
   return (
     <Router>
@@ -66,7 +69,7 @@ function App() {
         <div id="upper-header">
           <img id="logo" src="./jam-house-logo.png"/>
           <div id="header-right">
-            <LoginLogoutRegister username={state.username} />
+            <LoginLogoutRegister username={state.user ? state.user.username : null} />
             <div id="search-box">
               <input type="text" placeholder="Search"></input>
               <button><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
