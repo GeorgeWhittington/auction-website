@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faBars } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 import "./App.css";
 
+import { api } from "./constants";
 import Home from "./components/Home";
 import Search from "./components/Search";
 import Item from "./components/Item";
@@ -11,6 +14,9 @@ import Set from "./components/Set";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
+  // Once access-tokens are implemented, specify that cookie inside
+  // useCookies so that it changing triggers a re-render
+  const [cookies, setCookie] = useCookies();
   const [state, setState] = useState({
     username: null,
     menuHidden: true
@@ -39,7 +45,19 @@ function App() {
   }
 
   useEffect(() => {
-    
+    axios.get(api + "/me")
+      .then(function (response) {
+        // handle success
+        console.log(response);
+      })
+      .catch(function (error) {
+        if (error.status === 401) {
+          // Not logged in, ignore
+          return;
+        }
+        // handle error
+        console.log(error);
+      });
   })
 
   return (
