@@ -2,10 +2,11 @@ from django.urls import path, include
 from django.core import serializers
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
+from rest_framework.authtoken.views import obtain_auth_token
 
 from shop.models import Item, Set, Repository, Image
 from api.search import Search
-from api.me import Me
+from api.views import Me
 
 # Items
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -60,6 +61,7 @@ router.register(r'images', ImageViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('search', Search.as_view()),
+    path('login', obtain_auth_token, name='login'),
     path('me', Me.as_view()),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
