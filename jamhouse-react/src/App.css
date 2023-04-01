@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
+
+#root {
+    display: flex;
+    flex-direction: column;
+    font-family: "Poppins", sans-serif;
+}
+
+#content {
+    background-color: #eae0c8;
+    min-height: 1000px; /* TODO: Remove once there's actual content to fill the pages*/
+    padding: 0 300px;
+}
+
+#footer {
+    display: block;
+    padding: 15px 0;
+    text-align: center;
+}
+
+#footer > a {
+    color: black;
+}
+
+#footer > a:not(:first-child) {
+    margin-left: 15px;
+}
+
+/* --- Header --- */
+
+#upper-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+#logo {
+    max-width: 500px;
+}
+
+#header-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: right;
+}
+
+#login-options > a {
+    margin-left: 15px;
+    color: black;
+    text-decoration: none;
+}
+
+nav#lower-header .mobile-menu {
+    display: none;
+    font-size: 1.5em;
+}
+
+nav#lower-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #7C0A02;
+    padding: 15px 0;
+}
+
+nav#lower-header > a:not(:first-child) {
+    margin-left: 15px;
+}
+
+nav#lower-header > a,
+nav#lower-header .mobile-menu {
+    color: white;
+    text-decoration: none;
+    align-self: center;
+}
+
+nav#lower-header > a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+    #content {
+        padding: 0 100px
+    }
+}
+
+@media (max-width: 750px) {
+    #content {
+        padding: 0 50px;
+    }
+
+    /* --- Header --- */
+    #upper-header {
+        flex-direction: column;
+    }
+
+    #search-box {
+        margin-top: 10px;
+    }
+
+    #logo {
+        max-width: none;
+        width: 100%;
+    }
+
+    #login-options, #search-box {
+        align-self: center;
+    }
+}
+
+@media (max-width: 500px) {
+    #content {
+        padding: 0 10px;
+    }
+
+    nav#lower-header {
+        flex-direction: column;
+    }
+
+    nav#lower-header .mobile-menu {
+        display: block;
+        margin-left: auto;
+        margin-right: 15px;
+    }
+
+    nav#lower-header > a {
+        margin-right: auto;
+        font-size: 1.5em;
+    }
+
+    nav#lower-header .hidden {
+        display: none;
+    }
+}
