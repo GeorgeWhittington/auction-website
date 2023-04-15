@@ -1,0 +1,19 @@
+.item-list-item {
+    display: flex;
+    flex-direction: row;
+}
+
+.item-list-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.item-list-details {
+    margin-left: 1em;
+}
+
+.item-list-item a {
+    margin-left: auto;
+    align-self: center;
+}

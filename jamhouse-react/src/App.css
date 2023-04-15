@@ -9,8 +9,16 @@
 #content {
     background-color: #eae0c8;
     min-height: 1000px; /* TODO: Remove once there's actual content to fill the pages*/
-    padding: 0 300px;
+    padding: 0 200px;
 }
+
+#content::before {
+    clear: both;
+    content: "";
+    display: table;
+    margin-top: -1px;
+    height: 0;
+  }
 
 #footer {
     display: block;

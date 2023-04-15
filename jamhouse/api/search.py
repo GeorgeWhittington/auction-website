@@ -10,7 +10,7 @@ class Search(APIView):
 
     def get(self, request):
         term = request.query_params['q']
-        
+
         res = {
             'num_results' : 0,
             'data' : {}
@@ -18,5 +18,5 @@ class Search(APIView):
 
         item_data = serialize("json", Item.objects.filter(description__icontains=term))
         res['data'] = json.loads(item_data)
-        
+
         return JsonResponse(res, safe=False)

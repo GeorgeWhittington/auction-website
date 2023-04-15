@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  createSearchParams
+} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faBars } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -20,6 +26,7 @@ function App() {
     user: null,
     menuHidden: true
   });
+  const navigate = useNavigate();
 
   function handleMenuPress(event) {
     // Only accept Enter or Space keypresses
@@ -45,6 +52,18 @@ function App() {
     });
   }
 
+  function handleSearch(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const formJson = Object.fromEntries(formData.entries());
+
+    navigate({
+      pathname: "search",
+      search: `?${createSearchParams(formJson)}`
+    })
+  }
+
   useEffect(() => {
     // TODO: Consider moving this logic elsewhere
     if (cookies["access-token"] === null) {
@@ -53,27 +72,23 @@ function App() {
       }
     } else {
       axios.get(api + "/me", {headers: {"Authorization": `Token ${cookies["access-token"]}`}})
-      .then(function (response) {
+      .then((response) => {
         setState({...state, user: response.data});
-        console.log(response.data);
       })
-      .catch(function (error) {
-        console.log(error);
-      });
     }
   }, [])  // Empty array ensures this only runs *once*
 
   return (
-    <Router>
+    <div>
       <header>
         <div id="upper-header">
           <img id="logo" src="./jam-house-logo.png"/>
           <div id="header-right">
             <LoginLogoutRegister username={state.user ? state.user.username : null} />
-            <div id="search-box">
-              <input type="text" placeholder="Search"></input>
-              <button><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
-            </div>
+            <form id="search-box" onSubmit={handleSearch}>
+              <input name="query" type="text" placeholder="Search"></input>
+              <button form="search-box" type="submit"><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
+            </form>
           </div>
         </div>
         <nav id="lower-header">
@@ -107,7 +122,7 @@ function App() {
         <a href="#">Privacy Policy</a>
         <a href="#">Terms & Conditions</a>
       </div>
-    </Router>
+    </div>
   );
 }
 
