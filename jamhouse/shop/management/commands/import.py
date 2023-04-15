@@ -1,8 +1,10 @@
+from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError, CommandParser
 from shop.models import Item, Set, Repository
 
 ITEM_CSV_NAME = 'Online Store Project Items for Sale.csv'
 ITEM_CSV_SET_NAME = 'Online Store Project Sets of Items for Sale.csv'
+ITEM_CSV_SALES_NAME = 'Online Store Items Sales.csv'
 ITEM_REPOSITORIES = [
     {"name" : "SHOP A", 'filepath' : 'Online Store Project Items for Sale ALTERNATIVE SHOP A.csv'},
     {"name" : "SHOP B", 'filepath' : 'Online Store Project Items for Sale ALTERNATIVE SHOP B.csv'},
@@ -33,6 +35,25 @@ class Command(BaseCommand):
 
                     self.items[id] = new_item
 
+        print(len(self.items), 'Items Imported\n')
+
+    def import_sales(self, filepath):
+
+        with open(filepath, 'r') as f:
+            for line in f.readlines():
+                splits = line.split(',')
+
+                if splits[0].isdigit() and len(splits[1]) >= 10:
+                    item_no = splits[0]
+                    print(splits[1])
+                    date_sold = datetime.strptime(splits[1].strip('\n'), '%d/%m/%Y').date()
+
+                    item = self.items[int(item_no)]
+                    print(item_no, item, date_sold)
+
+                    item.sold_at = date_sold
+                    item.save()
+                    
         print(len(self.items), 'Items Imported\n')
 
     def import_sets(self, filepath):
@@ -105,6 +126,9 @@ class Command(BaseCommand):
         
         # Process items
         self.import_items(f'{directory}/{ITEM_CSV_NAME}')
+
+        # Process sales
+        self.import_sales(f'{directory}/{ITEM_CSV_SALES_NAME}')
 
         # Process Sets
         self.import_sets(f'{directory}/{ITEM_CSV_SET_NAME}')
