@@ -73,6 +73,7 @@ function SearchForm({ minPrice, maxPrice, sortBy, handleParamChange }) {
 function Search() {
   let [queryString, setQueryString] = useSearchParams();
   let [hasMore, setHasMore] = useState(true);
+  let [next, setNext] = useState(1);
   let [searchParams, setSearchParams] = useState({
     query: queryString.get("query"),
     "min-price": queryString.get("min-price"),
@@ -81,12 +82,23 @@ function Search() {
   });
   let [items, setItems] = useState([]);
 
-  useEffect(() => {
-    axios.get(api + "/search", { params: searchParams})
+  function fetchSearch() {
+    let parameters = searchParams
+    parameters.page = next;
+
+    if (!parameters.query) {
+      return;
+    }
+
+    axios.get(api + "/search", { params: parameters })
     .then((response) => {
       console.log(response.data);
+
       if (response.data.next === null) {
         setHasMore(false);
+      } else {
+        setHasMore(true);
+        setNext(response.data.next);
       }
 
       var results = [];
@@ -104,27 +116,33 @@ function Search() {
 
         results.push(item);
       });
-      setItems(results);
+      setItems((prevItems) => {return prevItems.concat(results)});
     })
     .catch((error) => {
       console.log(error);
     })
-  }, [])
-
-  function fetchMoreSearch() {
-    setHasMore(false);
   }
 
-  function refreshSearch() {
-  }
+  useEffect(() => {fetchSearch()}, [searchParams])
 
   function handleQueryChange(event) {
     // provide callback to function that triggers ajax request
     setSearchParams({...searchParams, query: event.target.value});
+    setItems([]);
+    setNext(1);
   }
 
   function handleParamChange(event) {
-
+    let filter = event.target.id;
+    if (filter === "min-price") {
+      setSearchParams({...searchParams, "min-price": event.target.value});
+    } else if (filter === "max-price") {
+      setSearchParams({...searchParams, "max-price": event.target.value});
+    } else if (filter === "sort-by") {
+      setSearchParams({...searchParams, "sort-by": event.target.value});
+    }
+    setItems([]);
+    setNext(1);
   }
 
   return (
@@ -142,7 +160,7 @@ function Search() {
       </div>
       <InfiniteScroll
         dataLength={items.length}
-        next={fetchMoreSearch}
+        next={fetchSearch}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
         // decide if should use built in refresh functionality

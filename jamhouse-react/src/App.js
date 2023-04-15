@@ -4,7 +4,8 @@ import {
   Route,
   Link,
   useNavigate,
-  createSearchParams
+  createSearchParams,
+  useLocation
 } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faBars } from "@fortawesome/free-solid-svg-icons";
@@ -27,6 +28,7 @@ function App() {
     menuHidden: true
   });
   const navigate = useNavigate();
+  const location = useLocation();
 
   function handleMenuPress(event) {
     // Only accept Enter or Space keypresses
@@ -86,7 +88,9 @@ function App() {
           <div id="header-right">
             <LoginLogoutRegister username={state.user ? state.user.username : null} />
             <form id="search-box" onSubmit={handleSearch}>
-              <input name="query" type="text" placeholder="Search"></input>
+              <input name="query" type="text" placeholder="Search"
+                     disabled={ location.pathname === "/search" }
+              ></input>
               <button form="search-box" type="submit"><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
             </form>
           </div>
