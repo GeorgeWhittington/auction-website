@@ -8,6 +8,7 @@ import "./App.css";
 
 import { api } from "./constants";
 import Home from "./components/Home";
+import Login from "./components/Login";
 import Search from "./components/Search";
 import Item from "./components/Item";
 import Set from "./components/Set";
@@ -92,6 +93,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/item/:id" element={<Item />} />
           <Route path="/set/:id" element={<Set />} />
+          <Route path="/login" element={<Login />} />
           {/* Also need to have:
           - Basket
           - Checkout workflow
