@@ -12,18 +12,29 @@ import "./Search.css";
 function SearchForm() {
   let [minimised, setMinimised] = useState(true);
 
+  function handleMenuPress(event) {
+    // Only accept Enter or Space keypresses
+    if (!(event.code === "Space" || event.code === "Enter")) {
+      return;
+    }
+    if (event.code === "Space") {
+      // Stop page scroll from pressing space
+      // event.stopPropagation();
+      event.preventDefault();
+    }
+    handleMenuClick();
+  }
+
   function handleMenuClick() {
     setMinimised((prev_minimised) => {return !prev_minimised});
   }
 
   let icon = minimised ? faChevronDown : faChevronUp;
-  let mobileSettings = <FontAwesomeIcon
-    icon={icon} onClick={handleMenuClick}
-    className="desktop-hidden"/>
+  let mobileSettings = <FontAwesomeIcon icon={icon} className="desktop-hidden"/>
 
   return (
     <div id="search-form">
-      <div id="mobile-toggle">
+      <div id="mobile-toggle" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0">
         <p>Advanced Settings</p>
         { mobileSettings }
       </div>
@@ -45,7 +56,8 @@ function SearchForm() {
 
         <label htmlFor="sort-by">Sort By</label>
         <select id="sort-by" name="sort-by">
-          <option value="relevant">Most Relevant</option>
+          {/* Relevence sorting would require proper search indexing, todo if there's time later */}
+          {/* <option value="relevant">Most Relevant</option> */}
           <option value="new">Newest</option>
           <option value="low-high">Price: Low to High</option>
           <option value="high-low">Price: High to Low</option>
@@ -57,20 +69,21 @@ function SearchForm() {
 function Search() {
   let [state, setState] = useState({
     hasMore: true,
+    searchParams: {query: "table"},
     items: [{description: "19th Century Fox", image: "http://localhost:8000/media/fox.jpg", price: 99.0, id: 1}]
   });
   let [searchParams, setSearchParams] = useSearchParams();
   let items = [];
 
-  // useEffect(() => {
-  //   axios.post(api + "/search")
-  //   .then((response) => {
-  //     console.log(response.data);
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //   })
-  // }, [])
+  useEffect(() => {
+    axios.get(api + "/search", { params: state.searchParams})
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }, [])
 
   function fetchMoreSearch() {
     setState({...state, hasMore: false});
