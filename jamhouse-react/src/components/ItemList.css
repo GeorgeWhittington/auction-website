@@ -1,12 +1,19 @@
 .item-list-item {
     display: flex;
     flex-direction: row;
+    margin: 10px 0;
 }
 
 .item-list-item img {
     width: 150px;
     height: 150px;
     object-fit: cover;
+}
+
+.item-list-item svg {
+    width: 150px;
+    height: 150px;
+    color: grey;
 }
 
 .item-list-details {

@@ -1,10 +1,18 @@
-from django.core import serializers
+import json
+
 from django.http import JsonResponse
 from django.core.serializers import serialize
-from rest_framework.views import APIView, Response
+from rest_framework.views import APIView
 from rest_framework.exceptions import ParseError
+from rest_framework.pagination import PageNumberPagination
+
 from shop.models import Item
-import json
+from api.serializers import ItemSerializer
+
+
+class SmallPagePagination(PageNumberPagination):
+    page_size = 10
+    max_page_size = 10
 
 
 def enforce_int(value):
@@ -14,11 +22,10 @@ def enforce_int(value):
         return None
 
 
-class Search(APIView):
+class Search(APIView, SmallPagePagination):
     queryset = Item.objects.none()
 
     def get(self, request):
-        permission_classes = tuple()
         term = request.query_params.get("query")
         min_price = enforce_int(request.query_params.get("min-price"))
         max_price = enforce_int(request.query_params.get("max-price"))
@@ -41,9 +48,6 @@ class Search(APIView):
             # default is "new"
             queryset = queryset.order_by("created_at")
 
-        results = {
-            "data": json.loads(serialize("json", queryset)),
-            "num_results": queryset.count()
-        }
-
-        return JsonResponse(results, safe=False)
+        page = self.paginate_queryset(queryset, request, view=self)
+        serializer = ItemSerializer(page, many=True, context={"request": request})
+        return self.get_paginated_response(serializer.data)

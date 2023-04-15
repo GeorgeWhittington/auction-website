@@ -9,7 +9,7 @@ import ItemList from "./ItemList"
 import { api } from "../constants";
 import "./Search.css";
 
-function SearchForm() {
+function SearchForm({ minPrice, maxPrice, sortBy, handleParamChange }) {
   let [minimised, setMinimised] = useState(true);
 
   function handleMenuPress(event) {
@@ -44,18 +44,22 @@ function SearchForm() {
         <div className="minmax">
           <label htmlFor="min-price">Min</label>
           <div className="input-icon">
-            <input type="number" id="min-price" name="min-price" min="0" step="0.01"></input>
+            <input type="number" id="min-price" name="min-price" min="0" step="0.01"
+                   value={minPrice !== null ? minPrice : ""} onChange={handleParamChange}></input>
             <i>£</i>
           </div>
           <label htmlFor="max-price">Max</label>
           <div className="input-icon">
-            <input type="number" id="max-price" name="max-price" min="0" step="0.01"></input>
+            <input type="number" id="max-price" name="max-price" min="0" step="0.01"
+                   value={maxPrice !== null ? maxPrice : ""} onChange={handleParamChange}></input>
             <i>£</i>
           </div>
         </div>
 
         <label htmlFor="sort-by">Sort By</label>
-        <select id="sort-by" name="sort-by">
+        <select id="sort-by" name="sort-by"
+                value={sortBy !== null ? sortBy : "new"}
+                onChange={handleParamChange}>
           {/* Relevence sorting would require proper search indexing, todo if there's time later */}
           {/* <option value="relevant">Most Relevant</option> */}
           <option value="new">Newest</option>
@@ -67,18 +71,40 @@ function SearchForm() {
 }
 
 function Search() {
-  let [state, setState] = useState({
-    hasMore: true,
-    searchParams: {query: "table"},
-    items: [{description: "19th Century Fox", image: "http://localhost:8000/media/fox.jpg", price: 99.0, id: 1}]
+  let [queryString, setQueryString] = useSearchParams();
+  let [hasMore, setHasMore] = useState(true);
+  let [searchParams, setSearchParams] = useState({
+    query: queryString.get("query"),
+    "min-price": queryString.get("min-price"),
+    "max-price": queryString.get("max-price"),
+    "sort-by": queryString.get("sort-by")
   });
-  let [searchParams, setSearchParams] = useSearchParams();
-  let items = [];
+  let [items, setItems] = useState([]);
 
   useEffect(() => {
-    axios.get(api + "/search", { params: state.searchParams})
+    axios.get(api + "/search", { params: searchParams})
     .then((response) => {
       console.log(response.data);
+      if (response.data.next === null) {
+        setHasMore(false);
+      }
+
+      var results = [];
+      response.data.results.forEach(result => {
+        let item = {
+          id: result.id,
+          price: Number(result.price),
+          description: result.description
+        }
+
+        try {
+          item.image = result.images[0].img
+          item.alt_text = result.images[0].alt
+        } catch (error) {}
+
+        results.push(item);
+      });
+      setItems(results);
     })
     .catch((error) => {
       console.log(error);
@@ -86,29 +112,42 @@ function Search() {
   }, [])
 
   function fetchMoreSearch() {
-    setState({...state, hasMore: false});
+    setHasMore(false);
   }
 
   function refreshSearch() {
   }
 
+  function handleQueryChange(event) {
+    // provide callback to function that triggers ajax request
+    setSearchParams({...searchParams, query: event.target.value});
+  }
+
+  function handleParamChange(event) {
+
+  }
+
   return (
     <>
-      <SearchForm />
+      <SearchForm
+        minPrice={searchParams["min-price"]}
+        maxPrice={searchParams["max-price"]}
+        sortBy={searchParams["sort-by"]}
+        handleParamChange={handleParamChange} />
       <div className="search-input">
         <div className="input-icon">
-          <input type="text"></input>
+          <input type="text" value={searchParams.query} onChange={handleQueryChange}></input>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </div>
       </div>
       <InfiniteScroll
-        dataLength={state.items.length}
+        dataLength={items.length}
         next={fetchMoreSearch}
-        hasMore={state.hasMore}
+        hasMore={hasMore}
         loader={<h4>Loading...</h4>}
         // decide if should use built in refresh functionality
       >
-        <ItemList items={state.items} />
+        <ItemList items={items} />
       </InfiniteScroll>
     </>
   );
