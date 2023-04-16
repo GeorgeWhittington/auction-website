@@ -78,8 +78,9 @@ function App() {
       .then((response) => {
         setState({...state, user: response.data});
       })
+      .catch((error) => {})
     }
-  }, [])  // Empty array ensures this only runs *once*
+  }, [cookies])
 
   return (
     <div>
