@@ -84,7 +84,9 @@ function App() {
     <div>
       <header>
         <div id="upper-header">
-          <img id="logo" src="./jam-house-logo.png"/>
+          <Link to="/">
+            <img id="logo" src="./jam-house-logo.png"/>
+          </Link>
           <div id="header-right">
             <LoginLogoutRegister username={state.user ? state.user.username : null} />
             <form id="search-box" onSubmit={handleSearch}>

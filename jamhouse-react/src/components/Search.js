@@ -40,18 +40,19 @@ function SearchForm({ minPrice, maxPrice, sortBy, handleParamChange }) {
       </div>
 
       <form id="advanced-options" className={minimised ? "" : "mobile-maximised"}>
-        <label>Price Range</label>
-        <div className="minmax">
-          <label htmlFor="min-price">Min</label>
+        <label htmlFor="min-price">Minimum Price</label>
+        <div>
           <div className="input-icon">
             <input type="number" id="min-price" name="min-price" min="0" step="0.01"
-                   value={minPrice !== null ? minPrice : ""} onChange={handleParamChange}></input>
+                    value={minPrice !== null ? minPrice : ""} onChange={handleParamChange}></input>
             <i>£</i>
           </div>
-          <label htmlFor="max-price">Max</label>
+        </div>
+        <label htmlFor="max-price">Maximum Price</label>
+        <div>
           <div className="input-icon">
             <input type="number" id="max-price" name="max-price" min="0" step="0.01"
-                   value={maxPrice !== null ? maxPrice : ""} onChange={handleParamChange}></input>
+                    value={maxPrice !== null ? maxPrice : ""} onChange={handleParamChange}></input>
             <i>£</i>
           </div>
         </div>
