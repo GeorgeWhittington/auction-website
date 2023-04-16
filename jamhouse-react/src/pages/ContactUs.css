@@ -1,0 +1,18 @@
+#contact-us-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#contact-us-content > img {
+    width: 100%;
+}
+
+@media (max-width: 800px) {
+    #contact-us-content {
+        grid-template-columns: 1fr;
+    }
+
+    #contact-us-content h4 {
+        margin-top: 0;
+    }
+}

@@ -19,6 +19,8 @@ import Login from "./pages/Login";
 import Search from "./pages/Search";
 import Item from "./pages/Item";
 import Set from "./pages/Set";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
@@ -101,12 +103,10 @@ function App() {
         </div>
         <nav id="lower-header">
           <div className="mobile-menu" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0"><FontAwesomeIcon icon={faBars} /></div>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>About Us</a>
+          <Link to={"/about-us"} className={state.menuHidden ? "hidden" : ""}>About Us</Link>
           <a href="#" className={state.menuHidden ? "hidden" : ""}>Locations</a>
           <a href="#" className={state.menuHidden ? "hidden" : ""}>Recently Sold</a>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>Contact Us</a>
-          {/* <Link to="/">Home</Link>
-          <Link to="/search">Search</Link> */}
+          <Link to={"/contact-us"} className={state.menuHidden ? "hidden" : ""}>Contact Us</Link>
         </nav>
       </header>
       <div id="content">
@@ -116,10 +116,11 @@ function App() {
           <Route path="/item/:id" element={<Item />} />
           <Route path="/set/:id" element={<Set />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
           {/* Also need to have:
           - Basket
           - Checkout workflow
-          - Login
           - Logout
           - User Profile Page (displaying prev orders/account details)
           - View Repository
