@@ -6,7 +6,7 @@ import axios from "axios";
 import { api } from "../constants";
 
 function LoginForm() {
-  const [cookies, setCookie] = useCookies(["access-token"]);
+  const [cookies, setCookie] = useCookies();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

@@ -24,12 +24,17 @@ import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
-  // Specifying re-render when 'access-token' changes
-  const [cookies, setCookie] = useCookies(["access-token"]);
+  const [cookies, setCookie] = useCookies();
+  const [accessToken, setAccessToken] = useState(cookies["access-token"]);
   const [user, setUser] = useState(null);
   const [menuHidden, setMenuHidden] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const accessTokenCookie = cookies["access-token"];
+  if (accessToken != accessTokenCookie) {
+    setAccessToken(accessTokenCookie);
+  }
 
   function handleMenuPress(event) {
     // Only accept Enter or Space keypresses
@@ -66,18 +71,18 @@ function App() {
 
   useEffect(() => {
     // TODO: Consider moving this logic elsewhere
-    if (cookies["access-token"] === null) {
+    if (accessToken === null) {
       if (user !== null) {
         setUser(null);
       }
     } else {
-      axios.get(api + "/me", {headers: {"Authorization": `Token ${cookies["access-token"]}`}})
+      axios.get(api + "/me", {headers: {"Authorization": `Token ${accessToken}`}})
       .then((response) => {
         setUser(response.data);
       })
       .catch((error) => {})
     }
-  }, [cookies])
+  }, [accessToken])
 
   return (
     <div>
