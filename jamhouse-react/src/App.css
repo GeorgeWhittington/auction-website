@@ -8,7 +8,7 @@
 
 #content {
     background-color: #eae0c8;
-    min-height: 1000px; /* TODO: Remove once there's actual content to fill the pages*/
+    min-height: 500px;
     padding: 0 200px;
 }
 
