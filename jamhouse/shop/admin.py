@@ -65,12 +65,12 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ("id", "description", "item_price", "sold_at")
     list_display_links = ("description",)
     list_filter = (SoldItemFilter,)
-    filter_horizontal = ("sets", "repositories")
+    filter_horizontal = ("sets", "repositories", "images")
     fieldsets = (
         (None, {"fields": ("description", "price", "sold_at")}),
         ("Advanced options", {
             "classes": ("collapse",),
-            "fields": ("sets", "repositories")
+            "fields": ("images", "sets", "repositories")
         })
     )
     actions = ("mark_item_sold",)

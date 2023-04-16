@@ -23,6 +23,7 @@ class Item(models.Model):
     sets = models.ManyToManyField("Set", blank=True)
     repositories = models.ManyToManyField("Repository", blank=True)
     images = models.ManyToManyField("Image", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.description
