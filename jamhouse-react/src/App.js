@@ -67,7 +67,7 @@ function App() {
     <Router>
       <header>
         <div id="upper-header">
-          <img id="logo" src="./jam-house-logo.png"/>
+          <img id="logo" src={process.env.PUBLIC_URL+'/jam-house-logo.png'}/>
           <div id="header-right">
             <LoginLogoutRegister username={state.user ? state.user.username : null} />
             <div id="search-box">
