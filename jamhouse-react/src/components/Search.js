@@ -147,7 +147,7 @@ function Search() {
   }
 
   return (
-    <>
+    <div id="search-wrapper">
       <SearchForm
         minPrice={searchParams["min-price"]}
         maxPrice={searchParams["max-price"]}
@@ -168,7 +168,7 @@ function Search() {
       >
         <ItemList items={items} />
       </InfiniteScroll>
-    </>
+    </div>
   );
 }
 

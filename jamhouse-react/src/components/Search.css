@@ -1,5 +1,5 @@
 /* Page layout */
-#content {
+#search-wrapper {
     display: grid;
     grid-template-columns: 300px 1fr;
     grid-auto-rows: min-content ;
@@ -110,7 +110,7 @@
 }
 
 @media (max-width: 750px) {
-    #content {
+    #search-wrapper {
         grid-template-columns: 1fr;
         grid-auto-rows: min-content;
     }
