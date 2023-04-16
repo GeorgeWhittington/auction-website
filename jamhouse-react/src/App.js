@@ -14,11 +14,11 @@ import { useCookies } from "react-cookie";
 import "./App.css";
 
 import { api } from "./constants";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Search from "./components/Search";
-import Item from "./components/Item";
-import Set from "./components/Set";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Search from "./pages/Search";
+import Item from "./pages/Item";
+import Set from "./pages/Set";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
