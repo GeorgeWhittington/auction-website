@@ -26,10 +26,8 @@ import LoginLogoutRegister from "./components/LoginLogoutRegister";
 function App() {
   // Specifying re-render when 'access-token' changes
   const [cookies, setCookie] = useCookies(["access-token"]);
-  const [state, setState] = useState({
-    user: null,
-    menuHidden: true
-  });
+  const [user, setUser] = useState(null);
+  const [menuHidden, setMenuHidden] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,14 +45,11 @@ function App() {
   }
 
   function handleMenuClick() {
-    console.log("menu clicked");
     if (window.innerWidth > 500) {
       return;
     }
 
-    setState(prevState => {
-      return {...prevState, menuHidden: !prevState.menuHidden}
-    });
+    setMenuHidden((prevMenuHidden) => {return !prevMenuHidden});
   }
 
   function handleSearch(e) {
@@ -72,13 +67,13 @@ function App() {
   useEffect(() => {
     // TODO: Consider moving this logic elsewhere
     if (cookies["access-token"] === null) {
-      if (state.user !== null) {
-        setState({...state, user: null});
+      if (user !== null) {
+        setUser(null);
       }
     } else {
       axios.get(api + "/me", {headers: {"Authorization": `Token ${cookies["access-token"]}`}})
       .then((response) => {
-        setState({...state, user: response.data});
+        setUser(response.data);
       })
       .catch((error) => {})
     }
@@ -92,7 +87,7 @@ function App() {
             <img id="logo" src="./jam-house-logo.png"/>
           </Link>
           <div id="header-right">
-            <LoginLogoutRegister username={state.user ? state.user.username : null} />
+            <LoginLogoutRegister username={user ? user.username : null} />
             <form id="search-box" onSubmit={handleSearch}>
               <input name="query" type="text" placeholder="Search"
                      disabled={ location.pathname === "/search" }
@@ -103,10 +98,10 @@ function App() {
         </div>
         <nav id="lower-header">
           <div className="mobile-menu" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0"><FontAwesomeIcon icon={faBars} /></div>
-          <Link to={"/about-us"} className={state.menuHidden ? "hidden" : ""}>About Us</Link>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>Locations</a>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>Recently Sold</a>
-          <Link to={"/contact-us"} className={state.menuHidden ? "hidden" : ""}>Contact Us</Link>
+          <Link to={"/about-us"} className={menuHidden ? "hidden" : ""}>About Us</Link>
+          <a href="#" className={menuHidden ? "hidden" : ""}>Locations</a>
+          <a href="#" className={menuHidden ? "hidden" : ""}>Recently Sold</a>
+          <Link to={"/contact-us"} className={menuHidden ? "hidden" : ""}>Contact Us</Link>
         </nav>
       </header>
       <div id="content">
