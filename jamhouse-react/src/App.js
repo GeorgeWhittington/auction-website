@@ -127,9 +127,8 @@ function App() {
         </Routes>
       </div>
       <div id="footer">
-        <a href="#">Cookies</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms & Conditions</a>
+        <a href="http://localhost:8000/media/jamhouse-cookie-policy.pdf">Cookies</a>
+        <a href="http://localhost:8000/media/jamhouse-privacy-policy.pdf">Privacy Policy</a>
       </div>
     </div>
   );
