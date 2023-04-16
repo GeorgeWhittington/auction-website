@@ -148,3 +148,7 @@ nav#lower-header > a:hover {
         display: none;
     }
 }
+
+.error-msg {
+    color:red;
+}
