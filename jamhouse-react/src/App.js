@@ -70,7 +70,6 @@ function App() {
   }
 
   useEffect(() => {
-    // TODO: Consider moving this logic elsewhere
     if (accessToken === null) {
       if (user !== null) {
         setUser(null);
