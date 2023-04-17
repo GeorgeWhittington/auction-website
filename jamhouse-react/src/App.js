@@ -14,22 +14,28 @@ import { useCookies } from "react-cookie";
 import "./App.css";
 
 import { api } from "./constants";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Search from "./components/Search";
-import Item from "./components/Item";
-import Set from "./components/Set";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Search from "./pages/Search";
+import Item from "./pages/Item";
+import Set from "./pages/Set";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
-  // Specifying re-render when 'access-token' changes
-  const [cookies, setCookie] = useCookies(["access-token"]);
-  const [state, setState] = useState({
-    user: null,
-    menuHidden: true
-  });
+  const [cookies, setCookie] = useCookies();
+  const [accessToken, setAccessToken] = useState(cookies["access-token"]);
+  const [user, setUser] = useState(null);
+  const [menuHidden, setMenuHidden] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const accessTokenCookie = cookies["access-token"];
+  if (accessToken != accessTokenCookie) {
+    setAccessToken(accessTokenCookie);
+  }
 
   function handleMenuPress(event) {
     // Only accept Enter or Space keypresses
@@ -45,14 +51,11 @@ function App() {
   }
 
   function handleMenuClick() {
-    console.log("menu clicked");
     if (window.innerWidth > 500) {
       return;
     }
 
-    setState(prevState => {
-      return {...prevState, menuHidden: !prevState.menuHidden}
-    });
+    setMenuHidden((prevMenuHidden) => {return !prevMenuHidden});
   }
 
   function handleSearch(e) {
@@ -69,18 +72,18 @@ function App() {
 
   useEffect(() => {
     // TODO: Consider moving this logic elsewhere
-    if (cookies["access-token"] === null) {
-      if (state.user !== null) {
-        setState({...state, user: null});
+    if (accessToken === null) {
+      if (user !== null) {
+        setUser(null);
       }
     } else {
-      axios.get(api + "/me", {headers: {"Authorization": `Token ${cookies["access-token"]}`}})
+      axios.get(api + "/me", {headers: {"Authorization": `Token ${accessToken}`}})
       .then((response) => {
-        setState({...state, user: response.data});
+        setUser(response.data);
       })
       .catch((error) => {})
     }
-  }, [cookies])
+  }, [accessToken])
 
   return (
     <div>
@@ -90,7 +93,7 @@ function App() {
             <img id="logo" src={process.env.PUBLIC_URL+'/jam-house-logo.png'}/>
           </Link>
           <div id="header-right">
-            <LoginLogoutRegister username={state.user ? state.user.username : null} />
+            <LoginLogoutRegister username={user ? user.username : null} />
             <form id="search-box" onSubmit={handleSearch}>
               <input name="query" type="text" placeholder="Search"
                      disabled={ location.pathname === "/search" }
@@ -101,12 +104,10 @@ function App() {
         </div>
         <nav id="lower-header">
           <div className="mobile-menu" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0"><FontAwesomeIcon icon={faBars} /></div>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>About Us</a>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>Locations</a>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>Recently Sold</a>
-          <a href="#" className={state.menuHidden ? "hidden" : ""}>Contact Us</a>
-          {/* <Link to="/">Home</Link>
-          <Link to="/search">Search</Link> */}
+          <Link to={"/about-us"} className={menuHidden ? "hidden" : ""}>About Us</Link>
+          <a href="#" className={menuHidden ? "hidden" : ""}>Locations</a>
+          <a href="#" className={menuHidden ? "hidden" : ""}>Recently Sold</a>
+          <Link to={"/contact-us"} className={menuHidden ? "hidden" : ""}>Contact Us</Link>
         </nav>
       </header>
       <div id="content">
@@ -116,10 +117,12 @@ function App() {
           <Route path="/item/:id" element={<Item />} />
           <Route path="/set/:id" element={<Set />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
           {/* Also need to have:
           - Basket
           - Checkout workflow
-          - Login
           - Logout
           - User Profile Page (displaying prev orders/account details)
           - View Repository
@@ -127,9 +130,8 @@ function App() {
         </Routes>
       </div>
       <div id="footer">
-        <a href="#">Cookies</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms & Conditions</a>
+        <a href="http://localhost:8000/media/jamhouse-cookie-policy.pdf">Cookies</a>
+        <a href="http://localhost:8000/media/jamhouse-privacy-policy.pdf">Privacy Policy</a>
       </div>
     </div>
   );

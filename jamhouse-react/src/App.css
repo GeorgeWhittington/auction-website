@@ -8,7 +8,7 @@
 
 #content {
     background-color: #eae0c8;
-    min-height: 1000px; /* TODO: Remove once there's actual content to fill the pages*/
+    min-height: 500px;
     padding: 0 200px;
 }
 
@@ -32,6 +32,12 @@
 
 #footer > a:not(:first-child) {
     margin-left: 15px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
 /* --- Header --- */
@@ -141,4 +147,8 @@ nav#lower-header > a:hover {
     nav#lower-header .hidden {
         display: none;
     }
+}
+
+.error-msg {
+    color:red;
 }

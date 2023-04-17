@@ -43,7 +43,9 @@ class Search(APIView, SmallPagePagination):
         if not term:
             raise ParseError
 
-        queryset = Item.objects.filter(description__icontains=term)
+        queryset = Item.objects.filter(
+            description__icontains=term,
+            sold_at__isnull=True)
         if min_price:
             queryset = queryset.filter(price__gte=min_price)
         if max_price:

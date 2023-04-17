@@ -5,18 +5,18 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginLogoutRegister({ username }) {
 
-  const[token, setToken, removeToken] = useCookies(['access-token']);
+  const[cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
 
   function logout() {
-    removeToken(['access-token']);
+    removeCookie(['access-token']);
     navigate(0); // reload
   }
 
   if (username !== null) {
     var options = <><a href="#">Welcome {username}!</a><a href="#" onClick={logout}>Logout</a></>;
   } else {
-    var options = <><Link to="/login">Login</Link><a href="#">Register</a></>;
+    var options = <><Link to="/login">Login</Link><Link to="/register">Register</Link></>;
   }
 
   return (

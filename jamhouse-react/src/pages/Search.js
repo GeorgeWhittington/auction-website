@@ -5,7 +5,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
-import ItemList from "./ItemList"
+import ItemList from "../components/ItemList"
 import { api } from "../constants";
 import "./Search.css";
 
