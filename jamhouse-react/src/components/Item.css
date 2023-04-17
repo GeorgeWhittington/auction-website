@@ -1,23 +1,74 @@
-.button-options {
-    color: rgb(231, 35, 35);
+/* rio rivers - 20018655 */
+
+
+@media only screen and (min-width: 1400px){
+    .desc{
+        color: rgb(0, 0, 0);
+        position:absolute;
+        right: 20%;
+        margin-top: 0px;
+    }
+
+    .itemInfo{
+        color: black;
+ 
+        float: right;
+        display:grid;
+  
+        margin-top:-30%;
+    }
+    .buttonOptions{
+        position: absolute;
+        
+        right: 30%;
+        margin-top:-25%;
+        cursor: pointer;
+    }
+
+    .setButton{
+        position: absolute;
+        
+        right: 40%;
+        margin-top:-25%;
+        cursor: pointer;
+    }
+
+    
+    .item-image  {
+        margin-top: 5%;
+    }
+
+    
 }
+
+
+/* Items for if item have one or less image */
 
 .item-image svg {
     width: 550px;
     height: 550px;
     color: grey;
+
+    
 }
 
 .item-image img {
+    height: 100vh;
+    
     width: 550px;
     height: 550px;
     object-fit: cover;
+
+    box-shadow: 5px 5px 10px gray;
 }
 
+
+/* Items for image slider */
 .slides {
+    
     position: relative;
     height: 100vh;
-    display: flex;
+
     justify-content: left;
     margin-top: 5%;
 }
@@ -26,7 +77,9 @@
     width: 550px;
     height: 550px;
     object-fit: cover;
+    box-shadow: 5px 5px 10px gray;
 }
+
 
 .leftArr {
     position: absolute;
@@ -50,6 +103,8 @@
     cursor: pointer;
     user-select: none;
 }
+
+
 @media only screen and (max-width: 1600px){
     .rightArr {
         position: absolute;
@@ -57,18 +112,40 @@
         right: 45%;
         font-size: 3em;
         color: aliceblue;
-    
         cursor: pointer;
         user-select: none;
     }
 
+    
+
 }
 
 @media only screen and (max-width: 1400px){
+
+    .item-image svg {
+        width: 100%;
+        height: 400px;
+        color: grey;
+        margin-top: 5%;
+    }
+    
+    .item-image img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        margin-top: 5%;
+        box-shadow: 5px 5px 10px gray;
+
+        
+    }
+    
+
+
     .imagesInArray img {
         width: 100%;
         height: 400px;
         object-fit: cover;
+        box-shadow: 5px 5px 10px gray;
     }
 
     .slides {

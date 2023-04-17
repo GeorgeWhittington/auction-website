@@ -1,10 +1,15 @@
-import { useParams } from "react-router-dom";
+//rio rivers - 20018655
+
+import { useParams,Link } from "react-router-dom";
 import {api} from "../constants";
 import {useState, useEffect} from 'react';
 import "./Item.css"
 import { faImage  } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaArrowAltCircleLeft,FaArrowAltCircleRight } from "react-icons/fa";
+
+
+
 
 function Item() {
   const {id} = useParams();
@@ -36,15 +41,38 @@ function Item() {
     console.log(item);
     return (
     <div key= {item.id}>
-    <h2><center>{item.description}</center></h2>
-    <Button itemSold={item.sold} />
+      <div className="desc">
+        <h2><center>{item.description}</center></h2>
+      </div>
+    
     <Image images={item.images} />
-
+    <SoldButton itemSold={item.sold} />
+    <SetButton itemSet={item.sets} />
+    <div className="itemInfo">
+        <p>£{item.price}</p>
+        <p>{item.sets}</p>
+        <p>http://localhost:8000/api/repositories/1/</p>
+        <p>test</p>
+    </div>
     {/* <p>Item price: {items.price}</p>
     <p>{items.images[0].img}</p>
     <p>Description: {items.sold ?'Sold' : 'Not Sold'}</p>  */}
     </div>
     );
+  }
+}
+
+function SetButton({itemSet}){
+  if ( itemSet.length !== 0){
+    return (
+      <div className="setButton">
+        <form action='/Set/{itemSet}'>
+        <input type ='submit' value='View item in set' />
+        </form>
+      </div>
+    
+    );
+
   }
 }
 
@@ -60,7 +88,6 @@ function Image({ images }){
     setCurrent(curr == len-1? 0 : curr+1)
   }
 
-
   if ( imgArray.length == 0){
     return (
     <div className="item-image">
@@ -74,7 +101,7 @@ function Image({ images }){
     
   }else{
     return(
-      <section className='slides'>
+      <div className='slides'>
         <FaArrowAltCircleLeft className='leftArr' onClick={prev} />
         <FaArrowAltCircleRight className='rightArr' onClick={next}/>
         <div className='imagesInArray'>
@@ -86,23 +113,36 @@ function Image({ images }){
             ) 
           })}
         </div>
-      </section>
+      </div>
     );
 
   }
-  
 }
 
 
-function Button({itemSold}){
+
+function SoldButton({itemSold}){
+
+
   if (itemSold !== false) {
-    var options = <p>sold</p>;
+    var options = <button disbaled>Item unavailable</button>;
+    
+
+
+    //<Link to={`/item/2`}>View Details</Link>;
+      
+    
   } else {
-    var options = <p>Add to basket</p>;
+    var options = 
+    <form action='http://localhost:3000/Item/2'>
+      <input type ='submit' value='Add to cart' />
+    </form>
   }
 
   return (
-    <div className="button-options">
+
+    
+    <div className="buttonOptions">
       {options}
     </div>
   )  
