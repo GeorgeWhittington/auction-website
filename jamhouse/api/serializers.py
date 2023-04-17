@@ -6,13 +6,13 @@ from django.contrib.auth.password_validation import validate_password
 from shop.models import Item, Set, Repository, Image
 
 
-class ImageSerializer(serializers.HyperlinkedModelSerializer):
+class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ['alt', 'img']
 
 
-class ItemSerializer(serializers.HyperlinkedModelSerializer):
+class ItemSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -20,13 +20,13 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'description', 'price', 'sold', 'sets', 'repositories', 'images']
 
 
-class SetSerializer(serializers.HyperlinkedModelSerializer):
+class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
         fields = ['id', 'description', 'price', 'items']
 
 
-class RepositorySerializer(serializers.HyperlinkedModelSerializer):
+class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
         fields = ['id', 'name', 'items']
