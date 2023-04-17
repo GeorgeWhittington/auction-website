@@ -5,11 +5,11 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginLogoutRegister({ username }) {
 
-  const[token, setToken, removeToken] = useCookies(['access-token']);
+  const[cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
 
   function logout() {
-    removeToken(['access-token']);
+    removeCookie(['access-token']);
     navigate(0); // reload
   }
 
