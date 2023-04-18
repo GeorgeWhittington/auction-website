@@ -5,8 +5,9 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from rest_framework.views import APIView, Response
+from rest_framework.renderers import JSONRenderer
 from rest_framework import permissions, views, generics
-from api.serializers import RegisterSerializer
+from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer
 from decimal import Decimal
 from shop.models import Item, Set
 
@@ -49,20 +50,35 @@ class CheckoutView(APIView):
 
         item_qs = Item.objects.filter(id__in=item_ids)
         set_qs = Set.objects.filter(id__in=set_ids)
-        
+
+        set_images = []
+
         for i in item_qs:
             total_price += i.price
 
         for s in set_qs:
             total_price += s.price
 
-        items_serialized = serializers.serialize('json', item_qs, fields=('id', 'description', 'price', 'images'))
-        sets_serialized = serializers.serialize('json', set_qs, fields=('price'))
-        
+            if len(s.items.all()) > 0:
+                image = s.items.all()[0].images.all()[0]
+                image_json = ImageSerializer(image, many=False, context={"request": request}).data
+                set_images.append(image_json)
+
+        items_serializer = ItemSerializer(item_qs, many=True, context={"request": request})
+        items_json = JSONRenderer().render(items_serializer.data)
+
+        sets_serializer = SetSerializer(set_qs, many=True, context={"request": request})
+
+        for i, set_img in enumerate(set_images):
+            sets_serializer.data[i]['images'] = set_img
+
+        print(sets_serializer.data)
+
+        sets_json = JSONRenderer().render(sets_serializer.data)
+
         return JsonResponse(
             {
                 'total_price' : total_price, 
-                'items' : json.loads(items_serialized),
-                'sets' : json.loads(sets_serialized)
-            } , status=200)
-
+                'items' : json.loads(items_json),
+                'sets' : json.loads(sets_json)
+            }, status=200)
