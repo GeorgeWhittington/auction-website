@@ -3,12 +3,10 @@
 import { useParams,Link } from "react-router-dom";
 import {api} from "../constants";
 import {useState, useEffect} from 'react';
-import "./Item.css"
-import { faImage  } from "@fortawesome/free-solid-svg-icons";
+import "../components/Item.css"
+import { faImage, faCircleLeft, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FaArrowAltCircleLeft,FaArrowAltCircleRight } from "react-icons/fa";
-
-
+import axios from 'axios'
 
 
 function Item() {
@@ -20,7 +18,7 @@ function Item() {
   useEffect(() => {
     fetch(api+`/items/${id}`+'/')
       .then(res => res.json())
-      .then(
+       .then(
         (result) => {
           setIsLoaded(true);
           setItem(result);
@@ -36,45 +34,71 @@ function Item() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
   if (loaded){
-    console.log(item);
+
+    let repoName = <></>
+    if (item.repositories.length > 0) {
+      repoName = <RepoFetch itemRepo={item.repositories[0]}/>
+    }
+
     return (
-    <div key= {item.id}>
-      <div className="desc">
-        <h2><center>{item.description}</center></h2>
+      <div className="conGrid">
+        <div className='infoGrid'>
+          <div key= {item.id}>
+            <div className="desc">
+              <h2><center>{item.description}</center></h2>
+            </div>
+            
+            <div className="itemInfo">
+              <p>£{item.price}</p>
+              {repoName}
+
+            </div> 
+
+            <div className="bGrid">
+              <SoldButton itemSold={item.sold} />
+              <SetButton itemSet={item.sets} />
+            </div>
+          </div>   
+        </div>
+
+        <div className="imgGrid">
+        <Image images={item.images} />
+        </div>
       </div>
-    
-    <Image images={item.images} />
-    <SoldButton itemSold={item.sold} />
-    <SetButton itemSet={item.sets} />
-    <div className="itemInfo">
-        <p>£{item.price}</p>
-        <p>{item.sets}</p>
-        <p>http://localhost:8000/api/repositories/1/</p>
-        <p>test</p>
-    </div>
-    {/* <p>Item price: {items.price}</p>
-    <p>{items.images[0].img}</p>
-    <p>Description: {items.sold ?'Sold' : 'Not Sold'}</p>  */}
-    </div>
     );
   }
 }
-
 function SetButton({itemSet}){
   if ( itemSet.length !== 0){
     return (
       <div className="setButton">
-        <form action='/Set/{itemSet}'>
-        <input type ='submit' value='View item in set' />
-        </form>
+        <Link to={`/Set/${itemSet}`} type="submit" className="danbutton">View item in a set</Link>
       </div>
     
     );
 
   }
 }
+function RepoFetch(props){
+  
+  const [repoName, setRepoName] = useState("");
+
+  axios.get(api+`/repositories/${props.itemRepo}/`)
+      .then(
+        function(response) {
+          setRepoName(response.data.name)
+        }
+      )
+
+  return(
+    <div>
+    <p>Repository: {repoName}</p>
+    </div>
+  )
+
+}
+
 
 function Image({ images }){
 
@@ -102,12 +126,12 @@ function Image({ images }){
   }else{
     return(
       <div className='slides'>
-        <FaArrowAltCircleLeft className='leftArr' onClick={prev} />
-        <FaArrowAltCircleRight className='rightArr' onClick={next}/>
+        <FontAwesomeIcon icon={faCircleLeft} className="leftArr" onClick={prev} />
+        <FontAwesomeIcon icon={faCircleRight} className="rightArr" onClick={next} />
         <div className='imagesInArray'>
           {imgArray.map((image,i) =>{
             return(
-              <div className={i == curr ? 'image active' : 'image'} key ={i}>
+              <div className={i == curr ? 'imageActive' : 'image'} key ={i}>
                 {i == curr && (<img src={image.img} />)}  
               </div>
             ) 
@@ -125,7 +149,7 @@ function SoldButton({itemSold}){
 
 
   if (itemSold !== false) {
-    var options = <button disbaled>Item unavailable</button>;
+    var options = <a href='#' type="submit" className="danbutton" disabled>Sold</a>
     
 
 
@@ -134,9 +158,7 @@ function SoldButton({itemSold}){
     
   } else {
     var options = 
-    <form action='http://localhost:3000/Item/2'>
-      <input type ='submit' value='Add to cart' />
-    </form>
+    <a href='#' type="submit" className="danbutton">Add to cart</a>
   }
 
   return (
