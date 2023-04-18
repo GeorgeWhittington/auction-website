@@ -21,10 +21,12 @@ export default function LoginLogoutRegister({ username, basketLength }) {
     var options = <><Link to="/login">Login</Link><Link to="/register">Register</Link></>;
   }
 
+  var basket = basketLength !== 0 ? ` (${basketLength})` : "";
+
   return (
     <div id="login-options">
       {options}
-      <Link to="/checkout"><FontAwesomeIcon icon={faBasketShopping} /> ({basketLength})</Link>
+      <Link to="/checkout"><FontAwesomeIcon icon={faBasketShopping} />{basket}</Link>
     </div>
   )
 }

@@ -1,6 +1,9 @@
 import { hours24 } from "./constants";
 
 function addToBasket(basket, setCookie, id, type) {
+    // sanity check, don't allow an item when it's set is already selected
+
+
     if (basket === undefined || !Array.isArray(basket)) {
         basket = [];
     }
