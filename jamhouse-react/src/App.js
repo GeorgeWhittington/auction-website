@@ -23,18 +23,30 @@ import Set from "./pages/Set";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
+import Checkout from "./pages/Checkout";
 
 function App() {
   const [cookies, setCookie] = useCookies();
   const [accessToken, setAccessToken] = useState(cookies["access-token"]);
   const [user, setUser] = useState(null);
   const [menuHidden, setMenuHidden] = useState(true);
+  const [basketLength, setBasketLength] = useState(0);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const accessTokenCookie = cookies["access-token"];
   if (accessToken != accessTokenCookie) {
     setAccessToken(accessTokenCookie);
+  }
+
+  const basketCookie = cookies["basket"];
+  if (!Array.isArray(basketCookie)) {
+    if (basketLength !== 0) {
+      setBasketLength(0);
+    }
+  } else if (basketCookie.length !== basketLength) {
+    setBasketLength(basketCookie.length);
   }
 
   function handleMenuPress(event) {
@@ -92,7 +104,7 @@ function App() {
             <img id="logo" src="./jam-house-logo.png"/>
           </Link>
           <div id="header-right">
-            <LoginLogoutRegister username={user ? user.username : null} />
+            <LoginLogoutRegister username={user ? user.username : null} basketLength={basketLength} />
             <form id="search-box" onSubmit={handleSearch}>
               <input name="query" type="text" placeholder="Search"
                      disabled={ location.pathname === "/search" }
@@ -119,6 +131,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/checkout" element={<Checkout />} />
           {/* Also need to have:
           - Basket
           - Checkout workflow
