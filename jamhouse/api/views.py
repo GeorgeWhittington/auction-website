@@ -37,7 +37,7 @@ class CheckoutView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        
+
         total_price = Decimal(0.0)
 
         item_ids = []
