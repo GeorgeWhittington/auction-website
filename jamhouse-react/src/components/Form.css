@@ -1,7 +1,7 @@
 .form-container {
     display: grid;
-    grid-template-columns: 12% auto;
-    row-gap: 10px;
+    grid-template-columns: min-content auto;
+    gap: 10px;
 }
 
 .form-input {
