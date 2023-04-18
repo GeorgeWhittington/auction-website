@@ -1,0 +1,30 @@
+.form-container {
+    display: grid;
+    grid-template-columns: min-content auto;
+    gap: 10px;
+}
+
+.form-input {
+    padding: 8px 8px;
+    resize: vertical;
+    border: 1px solid #7C0A02;
+}
+
+.form-submit {
+    float: right;
+    background-color: #7C0A02;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+    .form-container {
+        display: grid;
+        grid-template-columns: auto;
+        row-gap: 5px;
+    }
+}

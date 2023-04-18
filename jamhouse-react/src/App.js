@@ -16,6 +16,7 @@ import "./App.css";
 import { api } from "./constants";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Search from "./pages/Search";
 import Item from "./pages/Item";
 import Set from "./pages/Set";
@@ -115,6 +116,7 @@ function App() {
           <Route path="/item/:id" element={<Item />} />
           <Route path="/set/:id" element={<Set />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           {/* Also need to have:
