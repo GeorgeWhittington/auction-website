@@ -5,7 +5,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 from shop.models import Item, Set, Repository, Image
 from api.search import Search
-from api.views import Me, RegisterView
+from api.views import Me, RegisterView, CheckoutView
 from api.serializers import ItemSerializer, SetSerializer, RepositorySerializer, ImageSerializer
 
 
@@ -44,5 +44,6 @@ urlpatterns = [
     path('login', obtain_auth_token, name='login'),
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('me', Me.as_view()),
+    path('checkout', CheckoutView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
