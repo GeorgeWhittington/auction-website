@@ -58,9 +58,11 @@ class CheckoutView(APIView):
 
         for s in set_qs:
             total_price += s.price
-            image = s.items.all()[0].images.all()[0]
-            image_json = ImageSerializer(image, many=False, context={"request": request}).data
-            set_images.append(image_json)
+
+            if len(s.items.all()) > 0:
+                image = s.items.all()[0].images.all()[0]
+                image_json = ImageSerializer(image, many=False, context={"request": request}).data
+                set_images.append(image_json)
 
         items_serializer = ItemSerializer(item_qs, many=True, context={"request": request})
         items_json = JSONRenderer().render(items_serializer.data)
@@ -73,7 +75,7 @@ class CheckoutView(APIView):
         print(sets_serializer.data)
 
         sets_json = JSONRenderer().render(sets_serializer.data)
-        
+
         return JsonResponse(
             {
                 'total_price' : total_price, 
