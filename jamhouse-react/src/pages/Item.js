@@ -3,7 +3,7 @@
 import { useParams,Link } from "react-router-dom";
 import {api} from "../constants";
 import {useState, useEffect} from 'react';
-import "../components/Item.css"
+import "../pages/Item.css"
 import { faImage, faCircleLeft, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios'
@@ -146,20 +146,12 @@ function Image({ images }){
 
 
 function SoldButton({itemSold}){
-
-
   if (itemSold !== false) {
-    var options = <a href='#' type="submit" className="danbutton" disabled>Sold</a>
-    
-
-
-    //<Link to={`/item/2`}>View Details</Link>;
-      
-    
+    var options = <i><b>Sold</b></i>
   } else {
     var options = 
-    <a href='#' type="submit" className="danbutton">Add to cart</a>
-  }
+    <button href='#' type="submit" className="danbutton">Add to cart</button>
+  } 
 
   return (
 
