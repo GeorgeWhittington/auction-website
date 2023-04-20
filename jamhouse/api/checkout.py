@@ -1,43 +1,79 @@
+from enum import IntEnum
 from decimal import Decimal
 from datetime import datetime
 from shop.models import Item, Set
+from django.http import JsonResponse
 
+class CheckoutValidationStatus(IntEnum):
+    SUCCESS = 0
+    ITEMS_ALREADY_PURCHASED = 1
+    SETS_PURCHASED = 2
+
+class CheckoutValidation:
+    def __init__(self, status):
+        self.status = status
+        self.ids = []
+
+    def to_response(self):
+        print('to_response', self.ids)
+        status_code = 200 if self.status == CheckoutValidationStatus.SUCCESS else 400
+        return JsonResponse({'status' : self.status, 'ids' : list(set(self.ids))}, status=status_code)
+
+    def __str__(self):
+        return f'Status:{self.status} Ids:{self.ids}'
+    
 class CheckoutData:
     item_price = Decimal(0.0)
     set_price = Decimal(0.0)
     set_item_price = Decimal(0.0)
 
 def checkout_validate_items(item_ids: list):
-    item_qs = Item.objects.filter(id__in=item_ids, sold_at__isnull=True)
+    item_qs = Item.objects.filter(id__in=item_ids)
     
-    if len(item_ids) > len(item_qs):
-        return (False, "Item(s) have already been purchased.")
-    
-    return (True, "Success")
+    v = CheckoutValidation(CheckoutValidationStatus.SUCCESS)
+
+    for item in item_qs:
+        print(v.ids)
+        if item.sold_at != None:
+            v.status = CheckoutValidationStatus.ITEMS_ALREADY_PURCHASED
+            v.ids.append(item.id)
+            
+
+    return v
 
 def checkout_validate_sets(set_ids: list):
+    v = CheckoutValidation(CheckoutValidationStatus.SUCCESS)
+
     set_qs = Set.objects.filter(id__in=set_ids)
-    set_item_qs = Item.objects.filter(sets__in=set_ids, sold_at__isnull=True)
+    set_item_qs = Item.objects.filter(sets__in=set_ids)
 
     for set in set_qs:
-        if len(set_item_qs.all()) != len(set.items.all()):
-            return (False, "Item(s) within set have already been purchased.")
         if set.sold():
-           return (False, "Sets(s) have already been purchased.")
-    return (True, "Success")
+           v.status = CheckoutValidationStatus.SETS_PURCHASED
+           v.ids.append(set.id)
+
+    if v.status != CheckoutValidationStatus.SUCCESS:
+        return v
+    
+    for item in set_item_qs:
+        if item.sold_at != None:
+            v.status = CheckoutValidationStatus.ITEMS_ALREADY_PURCHASED
+            v.ids.append(item.id)
+
+    return v
 
 def checkout_calculate(item_ids: list, set_ids: list) -> CheckoutData:
     ret = CheckoutData()
     
-    # Validate items & sets
-    validated, msg = checkout_validate_items(item_ids)
-    if not validated:
-        return (validated, msg, None)
+    # validate items
+    validation = checkout_validate_items(item_ids)
+    if validation.status != CheckoutValidationStatus.SUCCESS:
+        return (validation, None)
     
-    validated, msg = checkout_validate_sets(set_ids)
-    
-    if not validated:
-        return (validated, msg, None)
+    # validate sets
+    validation = checkout_validate_sets(set_ids)
+    if validation.status != CheckoutValidationStatus.SUCCESS:
+        return (validation, None)
     
     # Calculate the price of items
     item_qs = Item.objects.filter(id__in=item_ids, sold_at__isnull=True)
@@ -55,7 +91,7 @@ def checkout_calculate(item_ids: list, set_ids: list) -> CheckoutData:
     for i in set_item_qs:
        ret.set_item_price += i.price
 
-    return (True, "Success", ret)
+    return (CheckoutValidation(CheckoutValidationStatus.SUCCESS), ret)
 
 def checkout_buy_item(item: Item):
     item.sold_at = datetime.now()
@@ -63,14 +99,15 @@ def checkout_buy_item(item: Item):
 
 def checkout_buy(item_ids: list, set_ids: list) -> bool:
 
-    # Validation
-    validated, msg = checkout_validate_items(item_ids)
-    if not validated:
-        return (validated, msg)
+    # validate items
+    validation = checkout_validate_items(item_ids)
+    if validation.status != CheckoutValidationStatus.SUCCESS:
+        return validation
     
-    validated, msg = checkout_validate_sets(set_ids)
-    if not validated:
-        return (validated, msg)
+    # validate sets
+    validation = checkout_validate_sets(set_ids)
+    if validation.status != CheckoutValidationStatus.SUCCESS:
+        return validation
     
     # Mark each item as sold
     item_qs = Item.objects.filter(id__in=item_ids, sold_at__isnull=True)
@@ -82,4 +119,4 @@ def checkout_buy(item_ids: list, set_ids: list) -> bool:
     for i in set_item_qs:
         checkout_buy_item(i)
 
-    return (True, "Success")
+    return CheckoutValidation(CheckoutValidationStatus.SUCCESS)
