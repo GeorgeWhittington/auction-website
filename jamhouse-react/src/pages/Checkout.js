@@ -93,10 +93,14 @@ export default function Checkout() {
     });
   }
 
-  function handleAddressSubmit(e) {
+  function buyBasket() {
+
+  }
+
+  function validateForm(data, setError) {
     var err = {messages: [], invalidFields: []}
 
-    for (const [key, value] of Object.entries(addressData)) {
+    for (const [key, value] of Object.entries(data)) {
       if (value === "") {
         err.invalidFields.push(key);
         if (!err.messages.includes("Please fill all fields")) {
@@ -110,10 +114,18 @@ export default function Checkout() {
     }
 
     if (err.invalidFields.length !== 0) {
-      setAddressError(err);
-      return;
+      setError(err);
+      return false;
     } else {
-      setAddressError({messages: [], invalidFields: []})
+      setError({messages: [], invalidFields: []});
+      return true;
+    }
+  }
+
+  function handleAddressSubmit() {
+    const success = validateForm(addressData, setAddressError);
+    if (!success) {
+      return;
     }
 
     // form is valid, continue
@@ -121,28 +133,26 @@ export default function Checkout() {
     setPaymentMinimised(false);
   }
 
-  function handlePaymentSubmit(e) {
-    var err = {messages: [], invalidFields: []};
-
-    for (const [key, value] of Object.entries(paymentData)) {
-      if (value === "") {
-        err.invalidFields.push(key);
-        if (!err.messages.includes("Please fill all fields")) {
-          err.messages.push("Please fill all fields");
-        }
-      }
+  function handlePaymentSubmit() {
+    const addressSuccess = validateForm(addressData, setAddressError);
+    if (!addressSuccess) {
+      setAddressMinimised(false);
+      setPaymentMinimised(true);
+      return;
     }
 
-    if (err.invalidFields.length !== 0) {
-      setPaymentError(err);
+    const paymentSuccess = validateForm(paymentData, setPaymentError);
+    if (!paymentSuccess) {
+      setAddressMinimised(true);
+      setPaymentMinimised(false);
       return;
-    } else {
-      setPaymentError({messages: [], invalidFields: []});
     }
 
     // form is valid, continue
+    setAddressMinimised(true);
     setPaymentMinimised(true);
-    // display a confirm order button?
+
+    buyBasket();
   }
 
   useEffect(() => {
@@ -175,7 +185,6 @@ export default function Checkout() {
       return <CheckoutItem item={set} key={set.id} type={"set"} />;
     })
   }
-  // ditto for sets
 
   var checkoutTotals = null;
   if (checkoutData !== null) {

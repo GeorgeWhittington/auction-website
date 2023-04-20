@@ -141,7 +141,7 @@ function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit }
           value={paymentData.securityCode} onChange={handleSecurityCodeChange}
           maxLength={3} className={error.invalidFields.includes("securityCode") ? "form-error" : ""} />
         <div>
-          <button type="button" onClick={handlePaymentSubmit}>Submit</button>
+          <button type="button" onClick={handlePaymentSubmit}>Buy Now</button>
         </div>
       </form>
     </div>
