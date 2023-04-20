@@ -158,9 +158,9 @@ function CheckoutItem({ item, type }) {
       {thumbnail}
       <p>{item.description}</p>
       <p>£{item.price}</p>
-      <FontAwesomeIcon
-        icon={faX} className="red" onClick={handleRemoveClick}
-        onKeyDown={handleRemovePress} tabIndex={0} />
+      <div className="checkout-item-remove" onClick={handleRemoveClick} onKeyDown={handleRemovePress} tabIndex={0}>
+        <FontAwesomeIcon icon={faX} className="red" />
+      </div>
     </div>
   );
 }
