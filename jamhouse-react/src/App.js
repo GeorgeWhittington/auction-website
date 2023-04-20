@@ -22,6 +22,7 @@ import Item from "./pages/Item";
 import Set from "./pages/Set";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
+import Profile from './pages/Profile'
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 
 function App() {
@@ -120,6 +121,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/profile" element={<Profile />} />
           {/* Also need to have:
           - Basket
           - Checkout workflow
