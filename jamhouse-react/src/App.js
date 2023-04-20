@@ -42,7 +42,6 @@ function App() {
   }
 
   const basketCookie = cookies["basket"];
-  console.log(basketCookie);
   if (!testBasketValid(basketCookie)) {
     if (basketLength !== 0) {
       setBasketLength(0);

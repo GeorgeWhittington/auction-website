@@ -12,14 +12,24 @@ function Item() {
   const [cookies, setCookie] = useCookies(["basket"]);
 
   function handleBasketClick() {
+    if (item.sold === true) {
+      alert("This item has already been sold");
+      return;
+    }
+
     let basket = cookies.basket;
     console.log(basket);
 
-    addToBasket(basket, setCookie, id, "item", item);
+    const success = addToBasket(basket, setCookie, id, "item", item);
+    if (success === "duplicate") {
+      alert("This item is already in your basket");
+    } else if (success === "contains") {
+        alert("An set containing this item is already in your basket, please remove it first");
+    }
   }
 
   useEffect(() => {
-    axios.get(api + `/items/${id}`)
+    axios.get(api + `/items/${id}/`)
     .then((response) => {
         console.log(response.data);
         setItem(response.data);

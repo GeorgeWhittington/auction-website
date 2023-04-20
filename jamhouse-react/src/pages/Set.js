@@ -12,10 +12,21 @@ function Set() {
     const [cookies, setCookie] = useCookies(["basket"]);
 
     function handleBasketClick() {
+        // if sold
+        // alert("This item has already been sold")
+
         let basket = cookies.basket;
         console.log(basket);
 
-        addToBasket(basket, setCookie, id, "set", set);
+        const success = addToBasket(basket, setCookie, id, "set", set);
+        if (!success) {
+            alert("An item from this set is already in your basket, please remove it first");
+        }
+        if (success === "duplicate") {
+            alert("This set is already in your basket");
+          } else if (success === "contains") {
+              alert("An item from this set is already in your basket, please remove it first");
+          }
     }
 
     useEffect(() => {

@@ -74,7 +74,6 @@ export default function Checkout() {
   const [basketLength, setBasketLength] = useState(0);
 
   const basketCookie = cookies["basket"];
-  console.log(basketCookie);
   if (!testBasketValid(basketCookie)) {
     if (basketLength !== 0) {
       setBasketLength(0);
@@ -95,7 +94,6 @@ export default function Checkout() {
   }
 
   function handleAddressSubmit(e) {
-    console.log(addressData);
     var err = {messages: [], invalidFields: []}
 
     for (const [key, value] of Object.entries(addressData)) {
@@ -124,7 +122,6 @@ export default function Checkout() {
   }
 
   function handlePaymentSubmit(e) {
-    console.log(paymentData);
     var err = {messages: [], invalidFields: []};
 
     for (const [key, value] of Object.entries(paymentData)) {
@@ -158,10 +155,10 @@ export default function Checkout() {
 
     axios.post(api + "/checkout", basket)
     .then((response) => {
-      console.log(response.data);
       setCheckoutData(response.data);
     }).catch((error) => {
       console.log(error);
+      // TODO: check error code, fix basket
     })
   }, [basketLength])
 
@@ -207,6 +204,8 @@ export default function Checkout() {
     paymentData={paymentData} error={paymentError}
     setPaymentData={setPaymentData}
     handlePaymentSubmit={handlePaymentSubmit} />
+
+  // TODO: check error code, render stuff differently?
 
   return (
     <div id="checkout">
