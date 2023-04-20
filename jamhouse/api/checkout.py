@@ -17,11 +17,13 @@ def checkout_validate_items(item_ids: list):
 
 def checkout_validate_sets(set_ids: list):
     set_qs = Set.objects.filter(id__in=set_ids)
+    set_item_qs = Item.objects.filter(sets__in=set_ids, sold_at__isnull=True)
 
     for set in set_qs:
+        if len(set_item_qs.all()) != len(set.items.all()):
+            return (False, "Item(s) within set have already been purchased.")
         if set.sold():
-           return ("False", "Sets(s) have already been purchased.")         
-        
+           return (False, "Sets(s) have already been purchased.")
     return (True, "Success")
 
 def checkout_calculate(item_ids: list, set_ids: list) -> CheckoutData:

@@ -59,7 +59,7 @@ class CheckoutView(APIView):
         set_images = []
 
         for s in Set.objects.filter(id__in=set_ids):
-            if len(s.items.all()) > 0:
+            if len(s.items.all()) > 0 and len(s.items.all()[0].images.all()) > 0:
                 image = s.items.all()[0].images.all()[0]
                 image_json = ImageSerializer(image, many=False, context={"request": request}).data
                 set_images.append(image_json)

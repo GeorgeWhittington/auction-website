@@ -219,7 +219,7 @@ function CheckoutItem({ item, type }) {
     removeFromBasket(cookies["basket"], setCookie, item.id, type);
   }
 
-  if (item.images.length !== 0) {
+  if (item.hasOwnProperty("images") && item.images.length !== 0) {
     var thumbnail = <img src={item.images[0].img} alt={item.images[0].alt} />
   } else {
     var thumbnail = <FontAwesomeIcon icon={faImage} className="thumbnail" />
@@ -351,23 +351,48 @@ export default function Checkout() {
       }
     }
 
-      axios.post(api + "/checkout", payload)
-      .then((response) => {
-        console.log(response.data);
-        setCheckoutData(response.data);
-      }).catch((error) => {
-        console.log(error);
-      })
+    axios.post(api + "/checkout", payload)
+    .then((response) => {
+      console.log(response.data);
+      setCheckoutData(response.data);
+    }).catch((error) => {
+      console.log(error);
+    })
   }, [basketLength])
 
+  var checkoutItems = null;
   if (checkoutData !== null && checkoutData.items !== null) {
-    var checkoutItems = null;
-    var checkoutItems = checkoutData.items.map((item) => {
+    checkoutItems = checkoutData.items.map((item) => {
       return <CheckoutItem item={item} key={item.id} type="item" />;
     })
   }
 
+  var checkoutSets = null;
+  if (checkoutData !== null && checkoutData.sets !== null) {
+    checkoutSets = checkoutData.sets.map((set) => {
+      return <CheckoutItem item={set} key={set.id} type={"set"} />;
+    })
+  }
   // ditto for sets
+
+  var checkoutTotals = null;
+  if (checkoutData !== null) {
+    const savings = Number(checkoutData.subtotal_price - checkoutData.total_price).toFixed(2);
+
+    checkoutTotals = <>
+      {checkoutData.subtotal_price !== checkoutData.total_price ?
+        <>
+          <hr/>
+          <p>Subtotal £{checkoutData.subtotal_price}</p>
+          <p className="red">You have saved £{savings}!</p>
+        </>
+        : ""
+      }
+      <hr/>
+      <p>Total £{checkoutData.total_price}</p>
+      <hr className="minimised-desktop"/>
+    </>
+  }
 
   const addressForm = <AddressForm
     addressData={addressData} error={addressError}
@@ -386,14 +411,8 @@ export default function Checkout() {
       </div>
       <div>
         {checkoutItems}
-        {/* if total is different to subtotal: */}
-        <hr/>
-        <p>Subtotal £00.00</p>
-        <p className="red">You have saved £00.00!</p>
-        {/* end */}
-        <hr/>
-        <p>Total £{checkoutData !== null ? checkoutData.total_price : ""}</p>
-        <hr className="minimised-desktop"/>
+        {checkoutSets}
+        {checkoutTotals}
       </div>
     </div>
   );
