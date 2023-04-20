@@ -65,4 +65,4 @@ function removeFromBasket(basket, setCookie, id, type) {
     setCookie("basket", basket, {path: "/", maxAge: hours24});
 }
 
-export { addToBasket, removeFromBasket, testBasketValid };
+export { addToBasket, removeFromBasket, testBasketValid, clearedBasket };

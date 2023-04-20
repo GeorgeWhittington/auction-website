@@ -6,23 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faChevronDown, faX } from "@fortawesome/free-solid-svg-icons";
 
 import "./Checkout.css";
-import { api } from "../constants";
-import { removeFromBasket, testBasketValid } from "../basket";
+import { api, hours24 } from "../constants";
+import { clearedBasket, removeFromBasket, testBasketValid } from "../basket";
 import { MinimiseableForm, PaymentForm, AddressForm } from "../components/CheckoutForms";
+import { handlePress } from "../accessibleClick";
 
 function CheckoutItem({ item, type }) {
   const [cookies, setCookie] = useCookies(["basket"]);
 
   function handleRemovePress(e) {
-    // Only accept Enter or Space keypresses
-    if (!(e.code === "Space" || e.code === "Enter")) {
-      return;
-    }
-    if (e.code === "Space") {
-      // Stop page scroll from pressing space
-      e.preventDefault();
-    }
-    handleRemoveClick();
+    handlePress(e, handleRemoveClick);
   }
 
   function handleRemoveClick() {
@@ -67,11 +60,10 @@ export default function Checkout() {
     messages: [], invalidFields: []
   });
   const [paymentMinimised, setPaymentMinimised] = useState(true);
-
-  const [cookies, setCookie] = useCookies(["basket"]);
-  const navigate = useNavigate();
-
   const [basketLength, setBasketLength] = useState(0);
+
+  const [cookies, setCookie, removeCookie] = useCookies(["basket"]);
+  const navigate = useNavigate();
 
   const basketCookie = cookies["basket"];
   if (!testBasketValid(basketCookie)) {
@@ -94,7 +86,14 @@ export default function Checkout() {
   }
 
   function buyBasket() {
-
+    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData})
+    .then((response) => {
+      console.log(response);
+      removeCookie("basket");
+      navigate("/post-checkout");
+    }).catch((error) => {
+      console.log(error);
+    })
   }
 
   function validateForm(data, setError) {

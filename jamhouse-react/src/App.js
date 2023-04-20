@@ -24,7 +24,9 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 import Checkout from "./pages/Checkout";
+import PostCheckout from "./pages/PostCheckout";
 import { testBasketValid } from "./basket";
+import { handlePress } from "./accessibleClick";
 
 function App() {
   const [cookies, setCookie] = useCookies();
@@ -53,16 +55,8 @@ function App() {
     }
   }
 
-  function handleMenuPress(event) {
-    // Only accept Enter or Space keypresses
-    if (!(event.code === "Space" || event.code === "Enter")) {
-      return;
-    }
-    if (event.code === "Space") {
-      // Stop page scroll from pressing space
-      event.preventDefault();
-    }
-    handleMenuClick();
+  function handleMenuPress(e) {
+    handlePress(e, handleMenuClick);
   }
 
   function handleMenuClick() {
@@ -135,6 +129,7 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/post-checkout" element={<PostCheckout />} />
         </Routes>
       </div>
       <div id="footer">

@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 import { numberRegex, currentYear } from "../constants"
+import { handlePress } from "../accessibleClick";
 
 function FormInput({id, addressData, handleAddressChange, error}) {
   let type = id !== "email" ? "text" : "email"
@@ -31,15 +32,7 @@ function FormErrors({ error }) {
 
 function MinimiseableForm({minimised, setMinimised, form, title}) {
   function handleMaximisePress(e) {
-    // Only accept Enter or Space keypresses
-    if (!(e.code === "Space" || e.code === "Enter")) {
-      return;
-    }
-    if (e.code === "Space") {
-      // Stop page scroll from pressing space
-      e.preventDefault();
-    }
-    handleMaximiseClick();
+    handlePress(e, handleMaximiseClick);
   }
 
   function handleMaximiseClick() {

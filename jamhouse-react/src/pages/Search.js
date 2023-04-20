@@ -8,20 +8,13 @@ import { faMagnifyingGlass, faChevronDown, faChevronUp } from "@fortawesome/free
 import ItemList from "../components/ItemList"
 import { api } from "../constants";
 import "./Search.css";
+import { handlePress } from "../accessibleClick";
 
 function SearchForm({ minPrice, maxPrice, sortBy, handleParamChange }) {
   let [minimised, setMinimised] = useState(true);
 
-  function handleMenuPress(event) {
-    // Only accept Enter or Space keypresses
-    if (!(event.code === "Space" || event.code === "Enter")) {
-      return;
-    }
-    if (event.code === "Space") {
-      // Stop page scroll from pressing space
-      event.preventDefault();
-    }
-    handleMenuClick();
+  function handleMenuPress(e) {
+    handlePress(e, handleMenuClick);
   }
 
   function handleMenuClick() {
