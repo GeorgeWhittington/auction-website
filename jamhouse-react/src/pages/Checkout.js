@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faChevronDown, faX } from "@fortawesome/free-solid-svg-icons";
 
 import "./Checkout.css";
 import { api } from "../constants";
+import { removeFromBasket } from "../basket";
 
 const fieldNames = {
   email: "Email", fName: "First Name",
@@ -46,7 +47,7 @@ function MinimiseableForm({minimised, setMinimised, form, title}) {
 
   if (minimised) {
     return (
-      <div id="minimised-form" onClick={handleMaximiseClick} onKeyDown={handleMaximisePress}>
+      <div id="minimised-form" onClick={handleMaximiseClick} onKeyDown={handleMaximisePress} tabIndex={0}>
         <span>{title}</span>
         <FontAwesomeIcon icon={faChevronDown}/>
       </div>
@@ -127,11 +128,29 @@ function AddressForm({ addressData, error, handleAddressChange, handleAddressSub
   );
 }
 
-function CheckoutItem({ item }) {
+function CheckoutItem({ item, type }) {
+  const [cookies, setCookie] = useCookies(["basket"]);
+
+  function handleRemovePress(e) {
+    // Only accept Enter or Space keypresses
+    if (!(e.code === "Space" || e.code === "Enter")) {
+      return;
+    }
+    if (e.code === "Space") {
+      // Stop page scroll from pressing space
+      e.preventDefault();
+    }
+    handleRemoveClick();
+  }
+
+  function handleRemoveClick() {
+    removeFromBasket(cookies["basket"], setCookie, item.id, type);
+  }
+
   if (item.images.length !== 0) {
     var thumbnail = <img src={item.images[0].img} alt={item.images[0].alt} />
   } else {
-    var thumbnail = <FontAwesomeIcon icon={faImage} />
+    var thumbnail = <FontAwesomeIcon icon={faImage} className="thumbnail" />
   }
 
   return (
@@ -139,13 +158,15 @@ function CheckoutItem({ item }) {
       {thumbnail}
       <p>{item.description}</p>
       <p>£{item.price}</p>
+      <FontAwesomeIcon
+        icon={faX} className="red" onClick={handleRemoveClick}
+        onKeyDown={handleRemovePress} tabIndex={0} />
     </div>
   );
 }
 
 export default function Checkout() {
-  const [basketData, setBasketData] = useState(null);
-
+  const [checkoutData, setCheckoutData] = useState(null);
   const [addressData, setAddressData] = useState({
     email: "", fName: "", lName: "",
     address: "", city: "", country: "",
@@ -155,7 +176,6 @@ export default function Checkout() {
     messages: [], invalidFields: []
   });
   const [addressMinimised, setAddressMinimised] = useState(false);
-
   const [paymentData, setPaymentData] = useState({
     cardNumber: "", name: "",
     expirationMonth: "", expirationYear: "",
@@ -168,6 +188,17 @@ export default function Checkout() {
 
   const [cookies, setCookie] = useCookies(["basket"]);
   const navigate = useNavigate();
+
+  const [basketLength, setBasketLength] = useState(0);
+
+  const basketCookie = cookies["basket"];
+  if (!Array.isArray(basketCookie)) {
+    if (basketLength !== 0) {
+      setBasketLength(0);
+    }
+  } else if (basketCookie.length !== basketLength) {
+    setBasketLength(basketCookie.length);
+  }
 
   function handleAddressChange(event, field) {
     setAddressData((prevData) => {
@@ -208,7 +239,7 @@ export default function Checkout() {
 
   useEffect(() => {
     let basket = cookies.basket;
-    if (!Array.isArray(basket)) {
+    if (!Array.isArray(basket) || basket.length === 0) {
       // Nothing in basket, redirect to home
       navigate("/");
       return;
@@ -226,16 +257,16 @@ export default function Checkout() {
       axios.post(api + "/checkout", payload)
       .then((response) => {
         console.log(response.data);
-        setBasketData(response.data);
+        setCheckoutData(response.data);
       }).catch((error) => {
         console.log(error);
       })
-  }, [])
+  }, [basketLength])
 
-  if (basketData !== null && basketData.items !== null) {
+  if (checkoutData !== null && checkoutData.items !== null) {
     var checkoutItems = null;
-    var checkoutItems = basketData.items.map((item) => {
-      return <CheckoutItem item={item} key={item.id} />;
+    var checkoutItems = checkoutData.items.map((item) => {
+      return <CheckoutItem item={item} key={item.id} type="item" />;
     })
   }
 
@@ -261,7 +292,7 @@ export default function Checkout() {
         <p className="red">You have saved £00.00!</p>
         {/* end */}
         <hr/>
-        <p>Total £{basketData !== null ? basketData.total_price : ""}</p>
+        <p>Total £{checkoutData !== null ? checkoutData.total_price : ""}</p>
         <hr className="minimised-desktop"/>
       </div>
     </div>

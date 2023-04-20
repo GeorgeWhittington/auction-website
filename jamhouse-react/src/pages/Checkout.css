@@ -34,17 +34,18 @@ input::placeholder {
 .checkout-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .checkout-item img,
-.checkout-item svg {
+.checkout-item .thumbnail {
     width: 100px;
     height: 100px;
     color: grey;
     object-fit: cover;
 }
 
-.checkout-item p {
+.checkout-item :not(:first-child) {
     margin-left: 10px;
 }
 
