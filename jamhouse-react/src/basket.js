@@ -54,22 +54,15 @@ function removeFromBasket(basket, setCookie, id, type) {
         return;
     }
 
-    let newBasket = clearedBasket;
-
-    for (let i = 0; i < basket.items.length; i++) {
-        if (`${type}s` === "items" && basket.items[i] == id) {
-            continue;
-        }
-        newBasket.items.push(basket.items[i]);
-    }
-    for (let i = 0; i < basket.sets.length; i++) {
-        if (`${type}s` === "sets" && basket.sets[i] == id) {
-            continue;
-        }
-        newBasket.sets.push(basket.sets[i]);
+    if (type === "item") {
+        let index = basket.items.indexOf(String(id));
+        basket.items.splice(index, 1);
+    } else if (type === "set") {
+        let index = basket.sets.indexOf(String(id));
+        basket.sets.splice(index, 1);
     }
 
-    setCookie("basket", newBasket, {path: "/", maxAge: hours24});
+    setCookie("basket", basket, {path: "/", maxAge: hours24});
 }
 
 export { addToBasket, removeFromBasket, testBasketValid };

@@ -104,7 +104,7 @@ function App() {
       <header>
         <div id="upper-header">
           <Link to="/">
-            <img id="logo" src="./jam-house-logo.png"/>
+            <img id="logo" src={process.env.PUBLIC_URL+'/jam-house-logo.png'}/>
           </Link>
           <div id="header-right">
             <LoginLogoutRegister username={user ? user.username : null} basketLength={basketLength} />
