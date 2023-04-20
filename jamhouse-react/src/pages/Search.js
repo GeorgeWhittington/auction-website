@@ -19,7 +19,6 @@ function SearchForm({ minPrice, maxPrice, sortBy, handleParamChange }) {
     }
     if (event.code === "Space") {
       // Stop page scroll from pressing space
-      // event.stopPropagation();
       event.preventDefault();
     }
     handleMenuClick();
