@@ -10,7 +10,7 @@ from rest_framework import permissions, views, generics
 from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer
 from decimal import Decimal
 from shop.models import Item, Set
-from api.checkout import CheckoutData, checkout_calculate, checkout_buy
+from api.checkout import CheckoutData, CheckoutValidation, CheckoutValidationStatus, checkout_calculate, checkout_buy
 
 class Me(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -48,10 +48,10 @@ class CheckoutView(APIView):
         if 'sets' in request.data:
             set_ids = request.data['sets']
 
-        validated, msg, cdata = checkout_calculate(item_ids, set_ids)
+        validation, data = checkout_calculate(item_ids, set_ids)
 
-        if not validated:
-            return JsonResponse({'result' : validated, 'msg' : msg}, status=400)
+        if validation.status != CheckoutValidationStatus.SUCCESS:
+            return validation.to_response()
             
         item_qs = Item.objects.filter(id__in=item_ids)
         set_qs = Set.objects.filter(id__in=set_ids)
@@ -75,11 +75,11 @@ class CheckoutView(APIView):
 
         return JsonResponse(
             {
-                'total_price'       : cdata.item_price + cdata.set_price, 
-                'set_price'         : cdata.set_price,
-                'item_price'        : cdata.item_price,
-                'set_item_price'    : cdata.set_item_price,
-                'subtotal_price'    : cdata.item_price + cdata.set_item_price,
+                'total_price'       : data.item_price + data.set_price, 
+                'set_price'         : data.set_price,
+                'item_price'        : data.item_price,
+                'set_item_price'    : data.set_item_price,
+                'subtotal_price'    : data.item_price + data.set_item_price,
                 'items' : json.loads(items_json),
                 'sets' : json.loads(sets_json)
             }, status=200)
@@ -89,7 +89,6 @@ class BuyView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-
         # get item and set ids from provided data
         item_ids = []
         set_ids = []
@@ -99,7 +98,6 @@ class BuyView(APIView):
         if 'sets' in request.data:
             set_ids = request.data['sets']
 
-        ret, msg = checkout_buy(item_ids, set_ids)
-        s = 200 if ret else 400
-        return JsonResponse({'result' : ret, 'msg' : msg}, status=s)
+        validation = checkout_buy(item_ids, set_ids)
+        return validation.to_response()
 
