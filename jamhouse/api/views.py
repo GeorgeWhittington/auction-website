@@ -10,7 +10,8 @@ from rest_framework import permissions, views, generics
 from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer
 from decimal import Decimal
 from shop.models import Item, Set
-from api.checkout import CheckoutData, CheckoutValidation, CheckoutValidationStatus, checkout_calculate, checkout_buy
+from api.checkout import CheckoutData, checkout_calculate, checkout_buy
+from api.validate import Validation, ValidationStatus, validate_card, validate_address
 
 class Me(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -50,7 +51,7 @@ class CheckoutView(APIView):
 
         validation, data = checkout_calculate(item_ids, set_ids)
 
-        if validation.status != CheckoutValidationStatus.SUCCESS:
+        if validation.status != ValidationStatus.SUCCESS:
             return validation.to_response()
             
         item_qs = Item.objects.filter(id__in=item_ids)
@@ -93,6 +94,29 @@ class BuyView(APIView):
         item_ids = []
         set_ids = []
 
+        print(request.data)
+        
+        card_validation = validate_card(request.data['paymentData']['cardNumber'],
+                                        request.data['paymentData']['name'],
+                                        request.data['paymentData']['expirationMonth'],
+                                        request.data['paymentData']['expirationYear'],
+                                        request.data['paymentData']['securityCode'])
+        
+        if card_validation.status != ValidationStatus.SUCCESS:
+            return card_validation.to_response()
+        
+        address_validation = validate_address(request.data['addressData']['email'],
+                                              request.data['addressData']['fName'],
+                                              request.data['addressData']['lName'],
+                                              request.data['addressData']['address'],
+                                              request.data['addressData']['city'],
+                                              request.data['addressData']['country'],
+                                              request.data['addressData']['county'],
+                                              request.data['addressData']['postcode'])
+        
+        if address_validation.status != ValidationStatus.SUCCESS:
+            return address_validation.to_response()
+        
         if 'items' in request.data:
             item_ids = request.data['items']
         if 'sets' in request.data:
