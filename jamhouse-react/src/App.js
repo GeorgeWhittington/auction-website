@@ -24,6 +24,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 import Checkout from "./pages/Checkout";
+import { testBasketValid } from "./basket";
 
 function App() {
   const [cookies, setCookie] = useCookies();
@@ -41,12 +42,16 @@ function App() {
   }
 
   const basketCookie = cookies["basket"];
-  if (!Array.isArray(basketCookie)) {
+  console.log(basketCookie);
+  if (!testBasketValid(basketCookie)) {
     if (basketLength !== 0) {
       setBasketLength(0);
     }
-  } else if (basketCookie.length !== basketLength) {
-    setBasketLength(basketCookie.length);
+  } else {
+    let length = basketCookie.items.length + basketCookie.sets.length;
+    if (length !== basketLength) {
+      setBasketLength(length);
+    }
   }
 
   function handleMenuPress(event) {
@@ -131,13 +136,6 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/checkout" element={<Checkout />} />
-          {/* Also need to have:
-          - Basket
-          - Checkout workflow
-          - Logout
-          - User Profile Page (displaying prev orders/account details)
-          - View Repository
-          */}
         </Routes>
       </div>
       <div id="footer">
