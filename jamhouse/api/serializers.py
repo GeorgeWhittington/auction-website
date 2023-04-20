@@ -23,7 +23,7 @@ class ItemSerializer(serializers.ModelSerializer):
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
-        fields = ['id', 'description', 'price', 'items']
+        fields = ['id', 'description', 'price', 'items', 'sold']
 
 
 class RepositorySerializer(serializers.ModelSerializer):
