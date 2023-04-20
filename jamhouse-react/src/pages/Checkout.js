@@ -16,6 +16,9 @@ const fieldNames = {
   postcode: "Postcode"
 }
 
+const numberRegex = /^\d+$/;
+const currentYear = new Date().getFullYear();
+
 function FormInput({id, addressData, handleAddressChange, error}) {
   let type = id !== "email" ? "text" : "email"
 
@@ -25,6 +28,20 @@ function FormInput({id, addressData, handleAddressChange, error}) {
       onChange={(e) => {handleAddressChange(e, id)}}
       className={error.invalidFields.includes(id) ? "form-error" : ""}
     />
+  )
+}
+
+function FormErrors({ error }) {
+  return (
+    <>
+    {error.messages.length !== 0 ?
+      <div>
+        {error.messages.map((error, index) => {
+          return <p key={index} className="red">{error}</p>;
+        })}
+      </div>
+    : ""}
+    </>
   )
 }
 
@@ -57,27 +74,88 @@ function MinimiseableForm({minimised, setMinimised, form, title}) {
   }
 }
 
-// cardNumber: "", name: "",
-//     expirationMonth: "", expirationYear: "",
-//     securityCode: ""
+function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit }) {
+  function testEmptyOrNumeric(value) {
+    return value === "" || numberRegex.test(value);
+  }
 
-function PaymentForm({ paymentData, error }) {
-  function handlePaymentSubmit() {
+  function handleCardNumberChange(e) {
+    if (testEmptyOrNumeric(e.target.value)) {
+      setPaymentData((prevData) => {
+        return {...prevData, cardNumber: e.target.value};
+      });
+    }
+  }
 
+  function handleExpiryMonthChange(e) {
+    if (!testEmptyOrNumeric(e.target.value)) {
+      return;
+    }
+    if (Number(e.target.value) > 31) {
+      return;
+    }
+
+    setPaymentData((prevData) => {
+      return {...prevData, expirationMonth: e.target.value};
+    });
+  }
+
+  function handleExpiryYearChange(e) {
+    if (!testEmptyOrNumeric(e.target.value)) {
+      return;
+    }
+    if (e.target.value.length === 2 && Number(`20${e.target.value}`) < currentYear) {
+      return;
+    }
+
+    setPaymentData((prevData) => {
+      return {...prevData, expirationYear: e.target.value};
+    });
+  }
+
+  function handleSecurityCodeChange(e) {
+    if (!testEmptyOrNumeric(e.target.value)) {
+      return;
+    }
+
+    setPaymentData((prevData) => {
+      return {...prevData, securityCode: e.target.value};
+    });
   }
 
   return (
     <div id="payment-form">
+      <FormErrors error={error} />
       <span>Payment Information</span>
       <form>
-        <input type="text" placeholder="Card Number" maxLength={19} />
-        <input type="text" placeholder="Cardholder Name" />
-        <div className="month-input">
-          <input type="text" placeholder="MM" maxLength={2} />
+        <input
+          type="text" placeholder="Card Number"
+          value={paymentData.cardNumber}
+          onChange={handleCardNumberChange}
+          className={error.invalidFields.includes("cardNumber") ? "form-error" : ""}
+          maxLength={19} />
+        <input
+          type="text" placeholder="Cardholder Name"
+          value={paymentData.name}
+          onChange={(e) => {setPaymentData((prevData) => {return {...prevData, name: e.target.value}})}}
+          className={error.invalidFields.includes("name") ? "form-error" : ""} />
+        <div className="expiry-input">
+          <input
+            type="text" placeholder="MM"
+            value={paymentData.expirationMonth}
+            onChange={handleExpiryMonthChange}
+            className={error.invalidFields.includes("expirationMonth") ? "form-error" : ""}
+            maxLength={2} />
           <span>/</span>
-          <input type="text" placeholder="YY" maxLength={2} />
+          <input
+            type="text" placeholder="YY" value={paymentData.expirationYear}
+            onChange={handleExpiryYearChange} maxLength={2}
+            className={error.invalidFields.includes("expirationYear") ? "form-error" : ""}/>
         </div>
-        <input type="text" placeholder="Security Code" maxLength={3} />
+        <input
+          type="text" placeholder="Security Code"
+          value={paymentData.securityCode} onChange={handleSecurityCodeChange}
+          maxLength={3} className={error.invalidFields.includes("securityCode") ? "form-error" : ""} />
         <div>
           <button type="button" onClick={handlePaymentSubmit}>Submit</button>
         </div>
@@ -97,13 +175,7 @@ function AddressForm({ addressData, error, handleAddressChange, handleAddressSub
 
   return (
     <div id="address-form">
-      {error.messages.length !== 0 ?
-        <div>
-          {error.messages.map((error, index) => {
-            return <p key={index} className="red">{error}</p>;
-          })}
-        </div>
-      : ""}
+      <FormErrors error={error} />
       <span>Address Information</span>
       <form>
         <FormInput id={"email"} addressData={addressData} handleAddressChange={handleAddressChange} error={error} />
@@ -237,6 +309,31 @@ export default function Checkout() {
     setPaymentMinimised(false);
   }
 
+  function handlePaymentSubmit(e) {
+    console.log(paymentData);
+    var err = {messages: [], invalidFields: []};
+
+    for (const [key, value] of Object.entries(paymentData)) {
+      if (value === "") {
+        err.invalidFields.push(key);
+        if (!err.messages.includes("Please fill all fields")) {
+          err.messages.push("Please fill all fields");
+        }
+      }
+    }
+
+    if (err.invalidFields.length !== 0) {
+      setPaymentError(err);
+      return;
+    } else {
+      setPaymentError({messages: [], invalidFields: []});
+    }
+
+    // form is valid, continue
+    setPaymentMinimised(true);
+    // display a confirm order button?
+  }
+
   useEffect(() => {
     let basket = cookies.basket;
     if (!Array.isArray(basket) || basket.length === 0) {
@@ -276,7 +373,10 @@ export default function Checkout() {
     addressData={addressData} error={addressError}
     handleAddressChange={handleAddressChange}
     handleAddressSubmit={handleAddressSubmit} />
-  const paymentForm = <PaymentForm paymentData={paymentData} error={paymentError} />
+  const paymentForm = <PaymentForm
+    paymentData={paymentData} error={paymentError}
+    setPaymentData={setPaymentData}
+    handlePaymentSubmit={handlePaymentSubmit} />
 
   return (
     <div id="checkout">

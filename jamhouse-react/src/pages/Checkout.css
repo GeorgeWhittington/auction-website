@@ -125,16 +125,16 @@ input::placeholder {
     grid-column: 1 / span 2;
 }
 
-.month-input {
+.expiry-input {
     display: flex;
     align-items: center;
 }
 
-.month-input input {
+.expiry-input input {
     width: 100%;
 }
 
-.month-input span {
+.expiry-input span {
     font-size: 1.25em;
     margin: 0 3px;
 }
