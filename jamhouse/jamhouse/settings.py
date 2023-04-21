@@ -155,3 +155,10 @@ CORS_ALLOWED_ORIGINS = [
 "http://127.0.0.1:3000"
 ]
 
+# Email
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "jamhouse.noreply@gmail.com"
+EMAIL_HOST_PASSWORD = "lkzcvsucekggobqv"    # should be stored in an environment variable!!!
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
