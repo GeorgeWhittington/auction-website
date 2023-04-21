@@ -14,7 +14,7 @@ export default function LoginLogoutRegister({ username }) {
   }
 
   if (username !== null) {
-    var options = <><a href="#">Welcome {username}!</a><a href="#" onClick={logout}>Logout</a></>;
+    var options = <><a href="/profile">Welcome {username}!</a><a href="#" onClick={logout}>Logout</a></>;
   } else {
     var options = <><Link to="/login">Login</Link><Link to="/register">Register</Link></>;
   }
