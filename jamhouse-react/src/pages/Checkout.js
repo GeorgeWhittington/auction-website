@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faChevronDown, faX } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faX, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 import "./Checkout.css";
-import { api, hours24 } from "../constants";
+import { api, checkoutStatus, hours24 } from "../constants";
 import { clearedBasket, removeFromBasket, testBasketValid } from "../basket";
 import { MinimiseableForm, PaymentForm, AddressForm } from "../components/CheckoutForms";
 import { handlePress } from "../accessibleClick";
@@ -61,6 +61,7 @@ export default function Checkout() {
   });
   const [paymentMinimised, setPaymentMinimised] = useState(true);
   const [basketLength, setBasketLength] = useState(0);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const [cookies, setCookie, removeCookie] = useCookies(["basket"]);
   const navigate = useNavigate();
@@ -85,15 +86,78 @@ export default function Checkout() {
     });
   }
 
+  function showAddress() {
+    setAddressMinimised(false);
+    setPaymentMinimised(true);
+  }
+
+  function showPayment() {
+    setAddressMinimised(true);
+    setPaymentMinimised(false);
+  }
+
+  function catchErrors(error) {
+    console.log(error);
+    const data = error.response.data;
+    if (!data.hasOwnProperty("status")) {
+      return;
+    }
+
+    const status = checkoutStatus[data.status];
+    if (status === "ITEMS_ALREADY_PURCHASED") {
+      const invalid_items = data.ids;
+      for (const item in invalid_items) {
+        removeFromBasket(basketCookie, setCookie, item, "item")
+      }
+      setCheckoutError("Some of the items selected had already been bought, they have been removed from your basket.");
+    } else if (status === "SETS_PURCHASED") {
+      const invalid_sets = data.ids;
+      for (const set in invalid_sets) {
+        removeFromBasket(basketCookie, setCookie, set, "set")
+      }
+      setCheckoutError("Some of the sets selected had already been bought, they have been removed from your basket.");
+    } else if (status === "ADDR_INVALID_EMAIL") {
+      showAddress();
+      setAddressError({
+        messages: ["Please enter a valid email address"],
+        invalidFields: ["email"]});
+    } else if (status === "ADDR_INVALID_NAME") {
+      showAddress();
+      setAddressError({
+        messages: ["Please enter a valid name"],
+        invalidFields: ["fName", "lName"]});
+    } else if (status === "CARD_INVALID_NUMBER") {
+      // do error setting and highlight
+      showPayment();
+      setPaymentError({
+        messages: ["Please enter a valid card number"],
+        invalidFields: ["cardNumber"]});
+    } else if (status === "CARD_INVALID_EXP") {
+      showPayment();
+      setPaymentError({
+        messages: ["Please enter a valid card expiry"],
+        invalidFields: ["expirationMonth", "expirationYear"]});
+    } else if (status === "CARD_INVALID_CVC") {
+      showPayment();
+      setPaymentError({
+        messages: ["Please enter a valid security code"],
+        invalidFields: ["securityCode"]});
+    } else {
+      setCheckoutError(`Error: ${status}!`);
+      return;
+    }
+
+    // after different errors, different ui should be minimised/maximised
+  }
+
   function buyBasket() {
     axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData})
     .then((response) => {
       console.log(response);
+      setCheckoutError("");
       removeCookie("basket");
       navigate("/post-checkout");
-    }).catch((error) => {
-      console.log(error);
-    })
+    }).catch(catchErrors)
   }
 
   function validateForm(data, setError) {
@@ -165,10 +229,7 @@ export default function Checkout() {
     axios.post(api + "/checkout", basket)
     .then((response) => {
       setCheckoutData(response.data);
-    }).catch((error) => {
-      console.log(error);
-      // TODO: check error code, fix basket
-    })
+    }).catch(catchErrors);
   }, [basketLength])
 
   var checkoutItems = null;
@@ -217,11 +278,18 @@ export default function Checkout() {
 
   return (
     <div id="checkout">
+      { checkoutError !== "" ?
+        <div id="checkout-flash">
+          <FontAwesomeIcon icon={faCircleExclamation} className="red" />
+          <p className="red">{checkoutError}</p>
+        </div>
+        : ""
+      }
       <div id="checkout-forms">
         <MinimiseableForm minimised={addressMinimised} setMinimised={setAddressMinimised} form={addressForm} title="Address Information" />
         <MinimiseableForm minimised={paymentMinimised} setMinimised={setPaymentMinimised} form={paymentForm} title="Payment Information" />
       </div>
-      <div>
+      <div id="checkout-listing">
         {checkoutItems}
         {checkoutSets}
         {checkoutTotals}

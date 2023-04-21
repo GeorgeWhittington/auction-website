@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-import { numberRegex, currentYear } from "../constants"
+import { numberRegex, currentYear, countries } from "../constants"
 import { handlePress } from "../accessibleClick";
 
 function FormInput({id, addressData, handleAddressChange, error}) {
@@ -68,7 +68,7 @@ function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit }
     if (!testEmptyOrNumeric(e.target.value)) {
       return;
     }
-    if (Number(e.target.value) > 31) {
+    if (Number(e.target.value) > 12) {
       return;
     }
 
@@ -157,6 +157,11 @@ function AddressForm({ addressData, error, handleAddressChange, handleAddressSub
     countryClasses += " form-error";
   }
 
+  const countryOptions = [];
+  for (const[key, value] of Object.entries(countries)) {
+    countryOptions.push(<option value={key} key={key}>{value}</option>);
+  }
+
   return (
     <div id="address-form">
       <FormErrors error={error} />
@@ -171,8 +176,7 @@ function AddressForm({ addressData, error, handleAddressChange, handleAddressSub
           value={addressData.country} onChange={(e) => {handleAddressChange(e, "country")}}
           className={countryClasses}>
           <option value="" disabled>Country</option>
-          <option value="uk">United Kingdom</option>
-          {/* TODO: all countries */}
+          { countryOptions.map((option) => {return option;}) }
         </select>
         <FormInput id={"county"} addressData={addressData} handleAddressChange={handleAddressChange} error={error} />
         <FormInput id={"postcode"} addressData={addressData} handleAddressChange={handleAddressChange} error={error} />

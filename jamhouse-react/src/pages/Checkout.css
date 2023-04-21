@@ -21,13 +21,19 @@ input::placeholder {
     margin-bottom: 20px;
 }
 
-#checkout > div:nth-child(1) {
-    grid-column: 1;
+#checkout #checkout-flash {
+    grid-column: 1 / span 2;
     grid-row: 1;
 }
 
-#checkout > div:nth-child(2) {
+#checkout #checkout-forms {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#checkout #checkout-listing {
     grid-column: 2;
+    grid-row: 2;
 }
 
 /* items */
@@ -184,19 +190,35 @@ select.form-error {
     background-color: #fbbbb6;
 }
 
+/* Error flash */
+#checkout-flash svg {
+    font-size: 1.25em;
+    margin-right: 1em;
+}
+
+#checkout-flash p {
+    display: inline;
+    font-size: 1.25em;
+}
+
 @media (max-width: 800px) {
     #checkout {
         grid-template-columns: 1fr;
     }
 
-    #checkout > div:nth-child(1) {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    #checkout > div:nth-child(2) {
+    #checkout #checkout-flash {
         grid-column: 1;
         grid-row: 1;
+    }
+
+    #checkout #checkout-forms {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    #checkout #checkout-listing {
+        grid-column: 1;
+        grid-row: 2;
     }
 
     #address-form form *:nth-child(6) {
