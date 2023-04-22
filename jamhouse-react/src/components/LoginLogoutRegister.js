@@ -3,7 +3,9 @@ import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
 import { useCookies } from "react-cookie";
 import { useNavigate, Link } from "react-router-dom";
 
-export default function LoginLogoutRegister({ username }) {
+import "./LoginLogoutRegister.css";
+
+export default function LoginLogoutRegister({ username, basketLength }) {
 
   const[cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
@@ -19,10 +21,12 @@ export default function LoginLogoutRegister({ username }) {
     var options = <><Link to="/login">Login</Link><Link to="/register">Register</Link></>;
   }
 
+  var basket = basketLength !== 0 ? ` (${basketLength})` : "";
+
   return (
     <div id="login-options">
       {options}
-      <a href="#"><FontAwesomeIcon icon={faBasketShopping} /></a>
+      <Link to="/checkout"><FontAwesomeIcon icon={faBasketShopping} />{basket}</Link>
     </div>
   )
 }
