@@ -3,7 +3,7 @@ import "../components/Form.css";
 export function FormInput(props) {
     return (<>
         <label htmlFor={props.id}>{props.label}</label>
-        <input id={props.id}  className="form-input" type={props.type} value={props.value} onChange={props.onChange}></input>
+        <input id={props.id}  className="form-input" type={props.type} autoComplete={props.autocomplete} value={props.value} placeholder={props.placeholder} onChange={props.onChange}></input>
     </>);
 }
 
@@ -13,7 +13,7 @@ export function FormBreak(props) {
 
 export function FormAwesome(props) {
     return (
-        <form onSubmit={props.onSubmit}>
+        <form onSubmit={props.onSubmit} autoComplete={props.autocomplete}>
             <div className="form-container">
                 {props.children}
             </div>

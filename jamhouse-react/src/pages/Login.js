@@ -49,9 +49,8 @@ function Login() {
 
   return (
     <div>
-     
-
-      <h2>Login</h2>
+      
+      <h3>Login</h3>
       
       {newAccountMsg}
       
@@ -65,8 +64,6 @@ function Login() {
       <br></br>
 
       <b className="error-msg"><center>{msg}</center></b>
-
-      
 
     </div>
   );

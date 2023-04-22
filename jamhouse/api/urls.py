@@ -6,7 +6,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 from shop.models import Item, Set, Repository, Image, Order
 from api.search import Search
-from api.views import Me, RegisterView, CheckoutView, BuyView, OrderCancelView
+from api.views import Me, RegisterView, CheckoutView, BuyView, OrderCancelView, UpdateNameView, UpdateEmailView, UpdatePasswordView
 from api.serializers import ItemSerializer, SetSerializer, RepositorySerializer, ImageSerializer, OrderSerializer
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -54,4 +54,7 @@ urlpatterns = [
     path('buy', BuyView.as_view()),
     path('order-cancel', OrderCancelView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('update-name', UpdateNameView.as_view()),
+    path('update-email', UpdateEmailView.as_view()),
+    path('update-password', UpdatePasswordView.as_view()),
 ]
