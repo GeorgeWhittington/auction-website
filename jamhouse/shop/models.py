@@ -1,5 +1,10 @@
+import random
+from enum import IntEnum
+from datetime import datetime
+
 from django.db import models
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 class Set(models.Model):
     description = models.CharField(max_length=128)
@@ -90,3 +95,31 @@ class Image(models.Model):
 
     def __str__(self) -> str:
         return str(self.img)
+
+class OrderStatus(IntEnum):
+    OPEN = 0
+    PENDING = 1
+    COMPLETE = 3
+    CANCELLED = 4
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+
+def generate_order_number():
+        while True:
+            num = random.randint(100000, 999999)
+            if not Order.objects.filter(number=num):
+                return num
+            
+class Order(models.Model):
+    number = models.IntegerField(default=generate_order_number, null=False, unique=False)
+    creation_time = models.DateTimeField(default=datetime.now, blank=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
+    items = models.ManyToManyField(Item, blank=True)
+    sets = models.ManyToManyField(Set, blank=True)
+    status = models.IntegerField(choices=OrderStatus.choices(), default=OrderStatus.OPEN)
+
+   
+            
+    

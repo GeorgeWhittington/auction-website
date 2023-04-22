@@ -23,12 +23,19 @@ import Set from "./pages/Set";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
+import Checkout from "./pages/Checkout";
+import PostCheckout from "./pages/PostCheckout";
+import Orders from "./pages/Orders";
+import { testBasketValid } from "./basket";
+import { handlePress } from "./accessibleClick";
 
 function App() {
   const [cookies, setCookie] = useCookies();
   const [accessToken, setAccessToken] = useState(cookies["access-token"]);
   const [user, setUser] = useState(null);
   const [menuHidden, setMenuHidden] = useState(true);
+  const [basketLength, setBasketLength] = useState(0);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,17 +44,20 @@ function App() {
     setAccessToken(accessTokenCookie);
   }
 
-  function handleMenuPress(event) {
-    // Only accept Enter or Space keypresses
-    if (!(event.code === "Space" || event.code === "Enter")) {
-      return;
+  const basketCookie = cookies["basket"];
+  if (!testBasketValid(basketCookie)) {
+    if (basketLength !== 0) {
+      setBasketLength(0);
     }
-    if (event.code === "Space") {
-      // Stop page scroll from pressing space
-      // event.stopPropagation();
-      event.preventDefault();
+  } else {
+    let length = basketCookie.items.length + basketCookie.sets.length;
+    if (length !== basketLength) {
+      setBasketLength(length);
     }
-    handleMenuClick();
+  }
+
+  function handleMenuPress(e) {
+    handlePress(e, handleMenuClick);
   }
 
   function handleMenuClick() {
@@ -71,7 +81,6 @@ function App() {
   }
 
   useEffect(() => {
-    // TODO: Consider moving this logic elsewhere
     if (accessToken === null) {
       if (user !== null) {
         setUser(null);
@@ -93,7 +102,7 @@ function App() {
             <img id="logo" src={process.env.PUBLIC_URL+'/jam-house-logo.png'}/>
           </Link>
           <div id="header-right">
-            <LoginLogoutRegister username={user ? user.username : null} />
+            <LoginLogoutRegister username={user ? user.username : null} basketLength={basketLength} />
             <form id="search-box" onSubmit={handleSearch}>
               <input name="query" type="text" placeholder="Search"
                      disabled={ location.pathname === "/search" }
@@ -120,13 +129,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          {/* Also need to have:
-          - Basket
-          - Checkout workflow
-          - Logout
-          - User Profile Page (displaying prev orders/account details)
-          - View Repository
-          */}
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/post-checkout" element={<PostCheckout />} />
         </Routes>
       </div>
       <div id="footer">

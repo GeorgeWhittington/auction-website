@@ -1,19 +1,38 @@
 //rio rivers - 20018655
 
-import { useParams,Link } from "react-router-dom";
-import {api} from "../constants";
-import {useState, useEffect} from 'react';
-import "../pages/Item.css"
+import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useCookies } from "react-cookie";
 import { faImage, faCircleLeft, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios'
 
+import { addToBasket } from "../basket";
+import { api } from "../constants";
+import "../pages/Item.css"
 
 function Item() {
   const {id} = useParams();
   const [error, setError] = useState(null);
   const [loaded, setIsLoaded] = useState(false);
   const [item, setItem] = useState();
+  const [cookies, setCookie] = useCookies(["basket"]);
+
+  function handleBasketClick() {
+    if (item.sold === true) {
+      alert("This item has already been sold");
+      return;
+    }
+
+    let basket = cookies.basket;
+
+    const success = addToBasket(basket, setCookie, id, "item", item);
+    if (success === "duplicate") {
+      alert("This item is already in your basket");
+    } else if (success === "contains") {
+      alert("An set containing this item is already in your basket, please remove it first");
+    }
+  }
 
   useEffect(() => {
     fetch(api+`/items/${id}`+'/')
@@ -48,18 +67,17 @@ function Item() {
             <div className="desc">
               <h2><center>{item.description}</center></h2>
             </div>
-            
+
             <div className="itemInfo">
               <p>£{item.price}</p>
               {repoName}
-
-            </div> 
+            </div>
 
             <div className="bGrid">
-              <SoldButton itemSold={item.sold} />
+              <SoldButton itemSold={item.sold} handleBasketClick={handleBasketClick} />
               <SetButton itemSet={item.sets} />
             </div>
-          </div>   
+          </div>
         </div>
 
         <div className="imgGrid">
@@ -75,25 +93,23 @@ function SetButton({itemSet}){
       <div className="setButton">
         <Link to={`/Set/${itemSet}`} type="submit" className="danbutton">View item in a set</Link>
       </div>
-    
     );
 
   }
 }
 function RepoFetch(props){
-  
   const [repoName, setRepoName] = useState("");
 
   axios.get(api+`/repositories/${props.itemRepo}/`)
-      .then(
-        function(response) {
-          setRepoName(response.data.name)
-        }
-      )
+  .then(
+    function(response) {
+      setRepoName(response.data.name)
+    }
+  )
 
   return(
     <div>
-    <p>Repository: {repoName}</p>
+      <p>Repository: {repoName}</p>
     </div>
   )
 
@@ -114,16 +130,17 @@ function Image({ images }){
 
   if ( imgArray.length == 0){
     return (
-    <div className="item-image">
-    <FontAwesomeIcon icon={faImage} />
-    </div>)
-  }else if (imgArray.length == 1){
+      <div className="item-image">
+      <FontAwesomeIcon icon={faImage} />
+      </div>
+    );
+  } else if (imgArray.length == 1){
     return (
       <div className="item-image">
-      <img src={images[0].img} />
-      </div>)
-    
-  }else{
+        <img src={images[0].img} />
+      </div>
+    );
+  } else{
     return(
       <div className='slides'>
         <FontAwesomeIcon icon={faCircleLeft} className="leftArr" onClick={prev} />
@@ -132,9 +149,9 @@ function Image({ images }){
           {imgArray.map((image,i) =>{
             return(
               <div className={i == curr ? 'imageActive' : 'image'} key ={i}>
-                {i == curr && (<img src={image.img} />)}  
+                {i == curr && (<img src={image.img} />)}
               </div>
-            ) 
+            )
           })}
         </div>
       </div>
@@ -143,24 +160,18 @@ function Image({ images }){
   }
 }
 
-
-
-function SoldButton({itemSold}){
+function SoldButton({itemSold, handleBasketClick}){
   if (itemSold !== false) {
     var options = <i><b>Sold</b></i>
   } else {
-    var options = 
-    <button href='#' type="submit" className="danbutton">Add to cart</button>
-  } 
+    var options = <a href='#' onClick={handleBasketClick} className="danbutton">Add to cart</a>
+  }
 
   return (
-
-    
     <div className="buttonOptions">
       {options}
     </div>
-  )  
+  )
 }
-
 
 export default Item;
