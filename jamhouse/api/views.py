@@ -7,9 +7,9 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView, Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework import permissions, views, generics
-from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer
+from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer, OrderSerializer
 from decimal import Decimal
-from shop.models import Item, Set
+from shop.models import Item, Set, Order, OrderStatus
 from api.checkout import CheckoutData, checkout_calculate, checkout_buy
 from api.validate import Validation, ValidationStatus, validate_card, validate_address
 
@@ -33,7 +33,7 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
-
+  
 class CheckoutView(APIView):
 
     permission_classes = (permissions.AllowAny,)
@@ -85,9 +85,8 @@ class CheckoutView(APIView):
                 'sets' : json.loads(sets_json)
             }, status=200)
 
-
 class BuyView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         # get item and set ids from provided data
@@ -122,6 +121,24 @@ class BuyView(APIView):
         if 'sets' in request.data:
             set_ids = request.data['sets']
 
-        validation = checkout_buy(item_ids, set_ids)
+        current_user = request.user
+        validation = checkout_buy(item_ids, set_ids, current_user)
+
         return validation.to_response()
 
+class OrderCancelView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+
+        if 'id' not in request.data:
+            return JsonResponse({'msg' : 'id required'}, status=400)
+        
+        order_id = request.data['id']
+
+        order = Order.objects.get(id=order_id)
+
+        order.status = OrderStatus.CANCELLED
+        order.save()
+
+        return JsonResponse({}, status=200)

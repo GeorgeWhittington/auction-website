@@ -14,6 +14,13 @@ const checkoutStatus = {
     22: "CARD_INVALID_CVC"
 }
 
+const orderStatus = {
+    0: "OPEN",
+    1: "PENDING",
+    2: "COMPLETE",
+    4: "CANCELLED",
+}
+
 const countries = {
     AF: "Afghanistan",
     AX: "Åland Islands",
@@ -266,4 +273,4 @@ const countries = {
     ZW: "Zimbabwe",
 }
 
-export { api, hours24, numberRegex, currentYear, checkoutStatus, countries };
+export { api, hours24, numberRegex, currentYear, checkoutStatus, countries, orderStatus};

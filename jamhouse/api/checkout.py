@@ -1,6 +1,7 @@
 from decimal import Decimal
 from datetime import datetime
-from shop.models import Item, Set
+from shop.models import Item, Set, Order
+from django.contrib.auth.models import User
 from api.validate import Validation, ValidationStatus
  
 class CheckoutData:
@@ -77,7 +78,7 @@ def checkout_buy_item(item: Item):
     item.sold_at = datetime.now()
     item.save()
 
-def checkout_buy(item_ids: list, set_ids: list) -> bool:
+def checkout_buy(item_ids: list, set_ids: list, user: User) -> bool:
 
     # validate items
     validation = checkout_validate_items(item_ids)
@@ -91,12 +92,23 @@ def checkout_buy(item_ids: list, set_ids: list) -> bool:
     
     # Mark each item as sold
     item_qs = Item.objects.filter(id__in=item_ids, sold_at__isnull=True)
+    set_qs = Set.objects.filter(id__in=set_ids)
     set_item_qs = Item.objects.filter(sets__in=set_ids, sold_at__isnull=True)
+    
+    order = Order()
+    order.save()
+    order.user = user
     
     for i in item_qs:
         checkout_buy_item(i)
-
+        order.items.add(i)
+        
     for i in set_item_qs:
         checkout_buy_item(i)
+
+    for s in set_qs:
+        order.sets.add(s)
+
+    order.save()
 
     return Validation(ValidationStatus.SUCCESS)

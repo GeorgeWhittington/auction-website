@@ -25,6 +25,7 @@ import ContactUs from "./pages/ContactUs";
 import LoginLogoutRegister from "./components/LoginLogoutRegister";
 import Checkout from "./pages/Checkout";
 import PostCheckout from "./pages/PostCheckout";
+import Orders from "./pages/Orders";
 import { testBasketValid } from "./basket";
 import { handlePress } from "./accessibleClick";
 
@@ -129,6 +130,7 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/post-checkout" element={<PostCheckout />} />
         </Routes>
       </div>

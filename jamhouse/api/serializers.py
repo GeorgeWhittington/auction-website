@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
-from shop.models import Item, Set, Repository, Image
+from shop.models import Item, Set, Repository, Image, Order
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -30,6 +30,14 @@ class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
         fields = ['id', 'name', 'items']
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = ItemSerializer(many=True, read_only=True)
+    sets = SetSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'number', 'creation_time', 'user', 'items', 'sets', 'status']
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=User.objects.all(), message="This email address is already in use.")])

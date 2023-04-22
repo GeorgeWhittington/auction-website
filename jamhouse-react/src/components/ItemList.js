@@ -5,6 +5,7 @@ import { faImage  } from "@fortawesome/free-solid-svg-icons";
 import "./ItemList.css"
 
 export default function ItemList({ items }) {
+  //console.log('items', items[0].price.toFixed(2))
   return (
     <>
       {items.map((item, index) => (
@@ -15,7 +16,7 @@ export default function ItemList({ items }) {
           }
           <div className="item-list-details">
             <h2>{item.description}</h2>
-            <p>£{item.price.toFixed(2)}</p>
+            <p>£{parseFloat(item.price).toFixed(2)}</p>
           </div>
           <Link to={`/item/${item.id}`}>View Details</Link>
         </div>
