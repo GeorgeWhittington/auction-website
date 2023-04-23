@@ -114,6 +114,7 @@ function App() {
         </div>
         <nav id="lower-header">
           <div className="mobile-menu" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0"><FontAwesomeIcon icon={faBars} /></div>
+          { user ? <Link to={"/orders"} className={menuHidden ? "hidden" : ""}>Your Orders</Link> : <></> }
           <Link to={"/about-us"} className={menuHidden ? "hidden" : ""}>About Us</Link>
           <a href="#" className={menuHidden ? "hidden" : ""}>Locations</a>
           <a href="#" className={menuHidden ? "hidden" : ""}>Recently Sold</a>
