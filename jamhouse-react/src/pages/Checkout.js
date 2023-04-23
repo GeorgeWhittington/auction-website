@@ -64,6 +64,8 @@ export default function Checkout() {
   const [checkoutError, setCheckoutError] = useState("");
 
   const [cookies, setCookie, removeCookie] = useCookies(["basket"]);
+  const [accessToken, setAccessToken] = useState(cookies["access-token"]);
+  
   const navigate = useNavigate();
 
   const basketCookie = cookies["basket"];
@@ -151,7 +153,7 @@ export default function Checkout() {
   }
 
   function buyBasket() {
-    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData})
+    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData}, {headers:{ "Authorization": `Token ${accessToken}`}})
     .then((response) => {
       console.log(response);
       setCheckoutError("");
