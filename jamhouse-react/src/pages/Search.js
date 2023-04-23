@@ -103,8 +103,8 @@ function Search() {
         }
 
         try {
-          item.image = result.images[0].img
-          item.alt_text = result.images[0].alt
+          item.image = result.images[0].img;
+          item.alt_text = result.images[0].alt;
         } catch (error) {}
 
         results.push(item);
@@ -156,7 +156,6 @@ function Search() {
         next={fetchSearch}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        // decide if should use built in refresh functionality
       >
         <ItemList items={items} />
       </InfiniteScroll>
