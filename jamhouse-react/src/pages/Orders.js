@@ -21,12 +21,11 @@ export default function Orders() {
     for (let i = 0; i < orders.length; i++) {
         o.push(<Order key={i} data={orders[i]}></Order>)
     }
+    
     return (
         <div>
             <h3>Orders</h3>
             {o}
         </div>
-        
-
     )
 }
