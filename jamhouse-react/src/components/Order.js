@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { orderStatus } from '../constants'
 import { api } from "../constants";
-
+import "../components/Order.css"
 export default function Order(props) {
 
     const [cookies, setCookie] = useCookies();
@@ -15,7 +15,7 @@ export default function Order(props) {
     let sets = <></>
 
     if (props.data.items.length) {
-        items = (<div><i>Items:</i> <ItemList items={props.data.items}></ItemList></div>);
+        items = (<div><ItemList items={props.data.items}></ItemList></div>);
     }
 
     if (props.data.sets.length) {
@@ -32,8 +32,7 @@ export default function Order(props) {
     }
 
     return (
-        <div>
-            <hr></hr>
+        <div className="order-item">
             <b>Number: </b>{props.data.number}<br></br>
             <b>Placed: </b>{date.toUTCString()}<br></br>
             <b>Status: </b>{orderStatus[props.data.status]}<br></br>
@@ -41,7 +40,7 @@ export default function Order(props) {
             {items}
             {sets}
 
-            { props.data.status === 0 ? <button onClick={() => cancelOrder(props.data.id)}>Cancel Order</button> : <></> }
+            { props.data.status === 0 ? <button className="order-cancel-button" onClick={() => cancelOrder(props.data.id)}>Cancel Order</button> : <></> }
 
         </div>
     )
