@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
             name='Order',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('number', models.IntegerField(default=shop.models.generate_order_number, unique=False)),
                 ('creation_time', models.DateTimeField(blank=True, null=True)),
                 ('status', models.IntegerField(choices=[(0, 'OPEN'), (1, 'PENDING'), (3, 'COMPLETE'), (4, 'CANCELLED')], default=shop.models.OrderStatus['OPEN'])),
                 ('items', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.DO_NOTHING, to='shop.item')),
