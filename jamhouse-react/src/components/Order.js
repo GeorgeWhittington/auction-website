@@ -33,7 +33,9 @@ export default function Order(props) {
 
     return (
         <div className="order-item">
-            <b>Number: </b>{props.data.number}<br></br>
+            <b>Order #{props.data.number}</b>
+            <hr></hr>
+            
             <b>Placed: </b>{date.toUTCString()}<br></br>
             <b>Status: </b>{orderStatus[props.data.status]}<br></br>
             
