@@ -1,6 +1,6 @@
 import random
 from enum import IntEnum
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.db import models
 from django.db.models import Q
@@ -119,3 +119,16 @@ class Order(models.Model):
     items = models.ManyToManyField(Item, blank=True)
     sets = models.ManyToManyField(Set, blank=True)
     status = models.IntegerField(choices=OrderStatus.choices(), default=OrderStatus.OPEN)
+
+    def update_status(self):
+        now = datetime.now(timezone.utc)
+        hour_diff = (abs(now - self.creation_time).seconds) / 3600
+
+        if self.status == OrderStatus.PENDING and hour_diff >= 12:
+            self.status = OrderStatus.COMPLETE
+            self.save()
+        elif self.status == OrderStatus.OPEN and hour_diff >= 6:
+            self.status = OrderStatus.PENDING
+            self.save()
+        
+        

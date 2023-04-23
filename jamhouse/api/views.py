@@ -77,6 +77,7 @@ class UpdateEmailView(generics.CreateAPIView):
         
         current_user = request.user
         current_user.email = new_email
+        current_user.username = new_email
         current_user.save()
 
         return JsonResponse({'result' : 'success', 'msg' : 'Your email has been updated.'}, status=200)
@@ -200,6 +201,10 @@ class OrderCancelView(APIView):
         order_id = request.data['id']
 
         order = Order.objects.get(id=order_id)
+
+        for item in order.items.all():
+            item.sold_at = None
+            item.save()
 
         order.status = OrderStatus.CANCELLED
         order.save()

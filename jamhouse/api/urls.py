@@ -31,7 +31,12 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        qs = Order.objects.filter(user=self.request.user)
+        
+        for order in qs:
+            order.update_status()
+
+        return qs
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
