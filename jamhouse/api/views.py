@@ -77,6 +77,7 @@ class UpdateEmailView(generics.CreateAPIView):
         
         current_user = request.user
         current_user.email = new_email
+        current_user.username = new_email
         current_user.save()
 
         return JsonResponse({'result' : 'success', 'msg' : 'Your email has been updated.'}, status=200)
