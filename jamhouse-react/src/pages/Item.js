@@ -39,6 +39,7 @@ function Item() {
       .then(res => res.json())
        .then(
         (result) => {
+          console.log(result);
           setIsLoaded(true);
           setItem(result);
         },
@@ -90,9 +91,13 @@ function Item() {
 function SetButton({itemSet}){
   if ( itemSet.length !== 0){
     return (
-      <div className="setButton">
-        <Link to={`/Set/${itemSet}`} type="submit" className="danbutton">View item in a set</Link>
-      </div>
+      <>
+        { itemSet.map((set) =>
+          <div className="setButton">
+            <Link key={set} to={`/set/${set}`} type="submit" className="danbutton">View item in a set</Link>
+          </div>
+        ) }
+      </>
     );
 
   }
