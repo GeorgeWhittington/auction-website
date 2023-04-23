@@ -1,6 +1,7 @@
 from enum import IntEnum
 from django.http import JsonResponse
 from datetime import datetime
+from shop.models import Item, Set, Order
 
 class ValidationStatus(IntEnum):
     SUCCESS = 0
@@ -52,3 +53,37 @@ def validate_address(email, fname, lname, address, city, country, county, postco
         return Validation(ValidationStatus.ADDR_INVALID_NAME)
     
     return Validation(ValidationStatus.SUCCESS)
+
+def validate_checkout_items(item_ids: list):
+    item_qs = Item.objects.filter(id__in=item_ids)
+    
+    v = Validation(ValidationStatus.SUCCESS)
+
+    for item in item_qs:
+        print(v.ids)
+        if item.sold_at != None:
+            v.status = ValidationStatus.ITEMS_ALREADY_PURCHASED
+            v.ids.append(item.id)
+            
+    return v
+
+def validate_checkout_sets(set_ids: list):
+    v = Validation(ValidationStatus.SUCCESS)
+
+    set_qs = Set.objects.filter(id__in=set_ids)
+    set_item_qs = Item.objects.filter(sets__in=set_ids)
+
+    for set in set_qs:
+        if set.sold():
+           v.status = ValidationStatus.SETS_PURCHASED
+           v.ids.append(set.id)
+
+    if v.status != ValidationStatus.SUCCESS:
+        return v
+    
+    for item in set_item_qs:
+        if item.sold_at != None:
+            v.status = ValidationStatus.ITEMS_ALREADY_PURCHASED
+            v.ids.append(item.id)
+
+    return v

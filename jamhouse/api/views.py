@@ -10,7 +10,8 @@ from rest_framework import permissions, views, generics
 from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer, OrderSerializer
 from decimal import Decimal
 from shop.models import Item, Set, Order, OrderStatus
-from api.checkout import CheckoutData, checkout_calculate, checkout_buy
+from api.checkout import CheckoutData, checkout_calculate
+from api.buy import buy
 from api.validate import Validation, ValidationStatus, validate_card, validate_address
 
 class Me(APIView):
@@ -184,7 +185,7 @@ class BuyView(APIView):
             set_ids = request.data['sets']
 
         current_user = request.user
-        validation = checkout_buy(item_ids, set_ids, current_user)
+        validation = buy(item_ids, set_ids, current_user)
 
         return validation.to_response()
 
