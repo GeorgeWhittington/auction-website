@@ -201,6 +201,10 @@ class OrderCancelView(APIView):
 
         order = Order.objects.get(id=order_id)
 
+        for item in order.items.all():
+            item.sold_at = None
+            item.save()
+
         order.status = OrderStatus.CANCELLED
         order.save()
 
