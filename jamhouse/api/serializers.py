@@ -21,12 +21,16 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class SetSerializer(serializers.ModelSerializer):
+    items = ItemSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Set
         fields = ['id', 'description', 'price', 'items', 'sold']
 
 
 class RepositorySerializer(serializers.ModelSerializer):
+    items = ItemSerializer(many=True, read_only=True)
+
     class Meta:
         model = Repository
         fields = ['id', 'name', 'items']
