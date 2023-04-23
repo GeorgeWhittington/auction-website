@@ -5,7 +5,6 @@ import { faImage  } from "@fortawesome/free-solid-svg-icons";
 import "./ItemList.css"
 
 export default function ItemList({ items }) {
-  //console.log('items', items[0].price.toFixed(2))
   return (
     <>
       {items.map((item, index) => (

@@ -27,6 +27,7 @@ import LoginLogoutRegister from "./components/LoginLogoutRegister";
 import Checkout from "./pages/Checkout";
 import PostCheckout from "./pages/PostCheckout";
 import Orders from "./pages/Orders";
+import RecentlySold from "./pages/RecentlySold";
 import { testBasketValid } from "./basket";
 import { handlePress } from "./accessibleClick";
 
@@ -117,7 +118,7 @@ function App() {
           { user ? <Link to={"/orders"} className={menuHidden ? "hidden" : ""}>Your Orders</Link> : <></> }
           <Link to={"/about-us"} className={menuHidden ? "hidden" : ""}>About Us</Link>
           <a href="#" className={menuHidden ? "hidden" : ""}>Locations</a>
-          <a href="#" className={menuHidden ? "hidden" : ""}>Recently Sold</a>
+          <Link to={"/recently-sold"} className={menuHidden ? "hidden" : ""}>Recently Sold</Link>
           <Link to={"/contact-us"} className={menuHidden ? "hidden" : ""}>Contact Us</Link>
         </nav>
       </header>
@@ -135,6 +136,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/post-checkout" element={<PostCheckout />} />
+          <Route path="/recently-sold" element={<RecentlySold />} />
         </Routes>
       </div>
       <div id="footer">
