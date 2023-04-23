@@ -8,25 +8,32 @@ import { api } from "../constants";
 
 function Set() {
     const [set, setSet] = useState(null);
+
     const { id } = useParams();
     const [cookies, setCookie] = useCookies(["basket"]);
 
     function handleBasketClick() {
-        // if sold
-        // alert("This item has already been sold")
+      // if sold
+      // alert("This item has already been sold")
 
-        let basket = cookies.basket;
-        console.log(basket);
+      let basket = cookies.basket;
+      console.log(basket);
 
-        const success = addToBasket(basket, setCookie, id, "set", set);
-        if (!success) {
-            alert("An item from this set is already in your basket, please remove it first");
-        }
-        if (success === "duplicate") {
-            alert("This set is already in your basket");
-          } else if (success === "contains") {
-              alert("An item from this set is already in your basket, please remove it first");
-          }
+      const success = addToBasket(basket, setCookie, id, "set", set);
+      if (!success) {
+          alert("An item from this set is already in your basket, please remove it first");
+      }
+      if (success === "duplicate") {
+        alert("This set is already in your basket");
+      } else if (success === "contains") {
+          alert("An item from this set is already in your basket, please remove it first");
+      }
+    }
+
+    function render_item_image(item) {
+      if (item.images.length !== 0) {
+        return <img src={item.images[0].img}></img>
+      }
     }
 
     useEffect(() => {
@@ -44,6 +51,9 @@ function Set() {
             <h2>Set: {id}</h2>
             <p>The data for a specific set, getting this info from the rest api</p>
             <a href="#" onClick={handleBasketClick}>Add to basket</a>
+            { set !== null ?
+            set.items.map(render_item_image)
+            : "" }
         </div>
     );
 }
