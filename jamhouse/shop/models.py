@@ -119,7 +119,3 @@ class Order(models.Model):
     items = models.ManyToManyField(Item, blank=True)
     sets = models.ManyToManyField(Set, blank=True)
     status = models.IntegerField(choices=OrderStatus.choices(), default=OrderStatus.OPEN)
-
-   
-            
-    
