@@ -125,8 +125,18 @@ function Search() {
     setNext(1);
   }
 
+  function checkNumber(value) {
+
+  }
+
   function handleParamChange(event) {
     let filter = event.target.id;
+    let value = event.target.value;
+
+    if (filter === "min-price" || filter == "max-price" && Number(value) < 0) {
+      value = "0"
+    }
+
     if (filter === "min-price") {
       setSearchParams({...searchParams, "min-price": event.target.value});
     } else if (filter === "max-price") {
