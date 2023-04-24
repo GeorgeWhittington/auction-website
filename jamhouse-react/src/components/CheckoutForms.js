@@ -5,7 +5,21 @@ import { numberRegex, currentYear, countries } from "../constants"
 import { handlePress } from "../accessibleClick";
 
 function FormInput({id, addressData, handleAddressChange, error}) {
-  let type = id !== "email" ? "text" : "email"
+  var type = "text";
+  if (id === "email") {
+    type = "email"
+  } else if (id === "saveAddress") {
+    return (
+      <div>
+        <label htmlFor="save-address">{fieldNames[id]}:</label>
+        <input
+          id="save-address" name="save-address"
+          type="checkbox" checked={addressData[id]}
+          onChange={(e) => {handleAddressChange(e, id)}}
+        />
+      </div>
+    );
+  }
 
   return (
     <input
@@ -13,7 +27,7 @@ function FormInput({id, addressData, handleAddressChange, error}) {
       onChange={(e) => {handleAddressChange(e, id)}}
       className={error.invalidFields.includes(id) ? "form-error" : ""}
     />
-  )
+  );
 }
 
 function FormErrors({ error }) {
@@ -145,10 +159,10 @@ const fieldNames = {
   email: "Email", fName: "First Name",
   lName: "Last Name", address: "Address",
   city: "City/Town", county: "County/State",
-  postcode: "Postcode"
+  postcode: "Postcode", saveAddress: "Save Address"
 }
 
-function AddressForm({ addressData, error, handleAddressChange, handleAddressSubmit }) {
+function AddressForm({ addressData, error, handleAddressChange, handleAddressSubmit, loggedIn }) {
   let countryClasses = "";
   if (addressData.country === "") {
     countryClasses += " unselected";
@@ -180,6 +194,7 @@ function AddressForm({ addressData, error, handleAddressChange, handleAddressSub
         </select>
         <FormInput id={"county"} addressData={addressData} handleAddressChange={handleAddressChange} error={error} />
         <FormInput id={"postcode"} addressData={addressData} handleAddressChange={handleAddressChange} error={error} />
+        { loggedIn ? <FormInput id={"saveAddress"} addressData={addressData} handleAddressChange={handleAddressChange} error={error} /> : "" }
         <div>
           <button type="button" onClick={handleAddressSubmit}>Submit</button>
         </div>

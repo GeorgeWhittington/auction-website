@@ -45,7 +45,7 @@ export default function Checkout() {
   const [addressData, setAddressData] = useState({
     email: "", fName: "", lName: "",
     address: "", city: "", country: "",
-    county: "", postcode: ""
+    county: "", postcode: "", saveAddress: false
   });
   const [addressError, setAddressError] = useState({
     messages: [], invalidFields: []
@@ -65,6 +65,7 @@ export default function Checkout() {
 
   const [cookies, setCookie, removeCookie] = useCookies(["basket"]);
   const [accessToken, setAccessToken] = useState(cookies["access-token"]);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const navigate = useNavigate();
 
@@ -88,7 +89,11 @@ export default function Checkout() {
   function handleAddressChange(event, field) {
     setAddressData((prevData) => {
       let newData = {...prevData}
-      newData[field] = event.target.value;
+      if (field === "saveAddress") {
+        newData[field] = !newData[field];
+      } else {
+        newData[field] = event.target.value;
+      }
       return newData;
     });
   }
@@ -153,8 +158,6 @@ export default function Checkout() {
       setCheckoutError(`Error: ${status}!`);
       return;
     }
-
-    // after different errors, different ui should be minimised/maximised
   }
 
   function buyBasket() {
@@ -242,6 +245,7 @@ export default function Checkout() {
     .then((request) => {
       console.log(request.data);
       if (request.data.email && request.data.first_name && request.data.last_name) {
+        setLoggedIn(true);
         setAddressData((prev) => {
           return {
             ...prev,
@@ -249,7 +253,7 @@ export default function Checkout() {
             fName: request.data.first_name,
             lName: request.data.last_name
           };
-        })
+        });
       }
     }).catch((error) => {
       // Not logged in
@@ -297,7 +301,8 @@ export default function Checkout() {
   const addressForm = <AddressForm
     addressData={addressData} error={addressError}
     handleAddressChange={handleAddressChange}
-    handleAddressSubmit={handleAddressSubmit} />
+    handleAddressSubmit={handleAddressSubmit}
+    loggedIn={loggedIn} />
   const paymentForm = <PaymentForm
     paymentData={paymentData} error={paymentError}
     setPaymentData={setPaymentData}
