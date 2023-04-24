@@ -104,6 +104,35 @@ class UpdatePasswordView(generics.CreateAPIView):
 
         return JsonResponse({'result' : 'success', 'msg' : 'Your password has been updated.'}, status=200)
 
+class UpdateAddressView(generics.CreateAPIView):
+    queryset = User.objects.none()
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+      
+        if "addr_address" not in request.data:
+            return JsonResponse({'result' : 'failed', 'msg' : 'Address value must be provided'}, status=400)
+        if "addr_city" not in request.data:
+            return JsonResponse({'result' : 'failed', 'msg' : 'Address city value must be provided'}, status=400)
+        if "addr_country" not in request.data:
+            return JsonResponse({'result' : 'failed', 'msg' : 'Address country value must be provided'}, status=400)
+        if "addr_county" not in request.data:
+            return JsonResponse({'result' : 'failed', 'msg' : 'Address county value must be provided'}, status=400)
+        if "addr_postcode" not in request.data:
+            return JsonResponse({'result' : 'failed', 'msg' : 'Address postcode value must be provided'}, status=400)
+
+        if not hasattr(request.user, 'checkoutinfo'):
+            request.user.checkoutinfo = CheckoutInfo()
+
+        request.user.checkoutinfo.addr_address = request.data['addr_address']
+        request.user.checkoutinfo.addr_city = request.data['addr_city']
+        request.user.checkoutinfo.addr_country = request.data['addr_country']
+        request.user.checkoutinfo.addr_county = request.data['addr_county']
+        request.user.checkoutinfo.addr_postcode = request.data['addr_postcode']
+        request.user.checkoutinfo.save()
+
+        return JsonResponse({'result' : 'success', 'msg' : 'Your address has been updated.'}, status=200)
+    
 class CheckoutView(APIView):
 
     permission_classes = (permissions.AllowAny,)
@@ -162,8 +191,6 @@ class BuyView(APIView):
         # get item and set ids from provided data
         item_ids = []
         set_ids = []
-
-        print(request.data)
 
         card_validation = validate_card(request.data['paymentData']['cardNumber'],
                                         request.data['paymentData']['name'],
