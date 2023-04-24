@@ -23,7 +23,11 @@ function CheckoutItem({ item, type }) {
   }
 
   if (item.hasOwnProperty("images") && item.images.length !== 0) {
-    var thumbnail = <img src={item.images[0].img} alt={item.images[0].alt} />
+    if (type == "set") {
+      var thumbnail = <img src={item.images.img} alt={item.images.alt} />
+    } else {
+      var thumbnail = <img src={item.images[0].img} alt={item.images[0].alt} />
+    }
   } else {
     var thumbnail = <FontAwesomeIcon icon={faImage} className="thumbnail" />
   }
