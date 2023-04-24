@@ -150,7 +150,7 @@ class CheckoutView(APIView):
             }, status=200)
 
 class BuyView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         # get item and set ids from provided data
@@ -185,8 +185,9 @@ class BuyView(APIView):
         if 'sets' in request.data:
             set_ids = request.data['sets']
 
+        email = request.data['addressData']['email']
         current_user = request.user
-        validation = buy(item_ids, set_ids, current_user)
+        validation = buy(item_ids, set_ids, current_user, email)
 
         return validation.to_response()
 
