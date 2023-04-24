@@ -1,10 +1,11 @@
 import random
+from decimal import Decimal
 from enum import IntEnum
 from datetime import datetime, timezone
-
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 class CheckoutInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -23,7 +24,7 @@ class CheckoutInfo(models.Model):
 
 class Set(models.Model):
     description = models.CharField(max_length=128)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
     archived = models.BooleanField(default=False)
     items = models.ManyToManyField("Item", through="Item_sets", blank=True)
 
@@ -80,7 +81,7 @@ class Set(models.Model):
 
 class Item(models.Model):
     description = models.CharField(max_length=128)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
     sold_at = models.DateTimeField(null=True, blank=True)
     sets = models.ManyToManyField("Set", blank=True)
     repositories = models.ManyToManyField("Repository", blank=True)
@@ -104,8 +105,8 @@ class Repository(models.Model):
         return self.name
 
 class Image(models.Model):
-    alt = models.TextField(blank=True)
-    img = models.ImageField(upload_to="", blank=True)
+    alt = models.TextField(blank=False)
+    img = models.ImageField(upload_to="", blank=False)
 
     def __str__(self) -> str:
         return str(self.img)
