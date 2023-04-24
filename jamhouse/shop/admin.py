@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.db.models import Count, F, Q, Case, When, Value
 from django.utils.translation import ngettext
-from .models import Set, Item, Repository, Image, Order
+from .models import Set, Item, Repository, Image, Order, CheckoutInfo
 
 # Filters
 class SoldFilter(admin.SimpleListFilter):
@@ -116,5 +116,9 @@ class ImageAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(CheckoutInfo)
 class OrderAdmin(admin.ModelAdmin):
     pass

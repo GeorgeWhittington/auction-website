@@ -6,6 +6,21 @@ from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
 
+class CheckoutInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    addr_address = models.CharField(max_length=128, blank=True, null=True)
+    addr_city = models.CharField(max_length=128, blank=True, null=True)
+    addr_country = models.CharField(max_length=128, blank=True, null=True)
+    addr_county = models.CharField(max_length=128, blank=True, null=True)
+    addr_postcode = models.CharField(max_length=10, blank=True, null=True)
+
+    card_number = models.IntegerField(blank=True, null=True)
+    card_name = models.CharField(max_length=128, blank=True, null=True)
+    card_exp_month = models.IntegerField(blank=True, null=True)
+    card_exp_year = models.IntegerField(blank=True, null=True)
+    card_cvc = models.IntegerField(blank=True, null=True)
+
 class Set(models.Model):
     description = models.CharField(max_length=128)
     price = models.DecimalField(decimal_places=2, max_digits=10)
@@ -62,7 +77,6 @@ class Set(models.Model):
         self.save()
 
         return new_set
-
 
 class Item(models.Model):
     description = models.CharField(max_length=128)
