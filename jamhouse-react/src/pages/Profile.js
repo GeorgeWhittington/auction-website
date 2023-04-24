@@ -13,6 +13,12 @@ export default function Profile() {
     const [lname, setLName] = useState("");
     const [email, setEmail] = useState("");
 
+    const [addr, setAddr] = useState("");
+    const [addrCity, setAddrCity] = useState("");
+    const [addrCounty, setAddrCounty] = useState("");
+    const [addrCountry, setAddrCountry] = useState("");
+    const [addrPostcode, setAddrPostcode] = useState("");
+
     const [uStatus, setUStatus] = useState("");
 
     const [uFName, setUFName] = useState("");
@@ -21,6 +27,12 @@ export default function Profile() {
     const [uPass, setUPass] = useState("");
     const [uConfirmPass, setUConfirmPass] = useState("");
 
+    const [uAddr, setUAddr] = useState("");
+    const [uAddrCity, setUAddrCity] = useState("");
+    const [uAddrCounty, setUAddrCounty] = useState("");
+    const [uAddrCountry, setUAddrCountry] = useState("");
+    const [uAddrPostcode, setUAddrPostcode] = useState("");
+
     function loadDetails() {
         axios.get(api + "/me?v=1", { headers: { "Authorization": `Token ${accessToken}` } })
             .then((response) => {
@@ -28,6 +40,10 @@ export default function Profile() {
                 setFName(response.data['first_name']);
                 setLName(response.data['last_name']);
                 setEmail(response.data['email'])
+
+                if (response.data['checkoutinfo']) {
+                    setAddr()
+                }
             })
             .catch((error) => { }
             )
@@ -137,6 +153,19 @@ export default function Profile() {
                 <FormInput label="Password:" id="upass" type="password" autocomplete="new-password" onChange={e => setUPass(e.target.value)}></FormInput>
                 <FormInput label="Confirm Password:" id="uconfpass" type="password" autocomplete="new-password" onChange={e => setUConfirmPass(e.target.value)}></FormInput>
             </FormAwesome>
+
+            <br></br>
+
+            <h4>Change Address</h4>
+            <hr></hr>
+            <FormAwesome submitText="Update Address" onSubmit={changePasswordSubmit} autocomplete="off">
+                <FormInput label="Address:" id="addr" type="text"></FormInput>
+                <FormInput label="City:" id="addr" type="text"></FormInput>
+                <FormInput label="County:" id="addr" type="text"></FormInput>
+                <FormInput label="Country:" id="addr" type="text"></FormInput>
+                <FormInput label="Postcode:" id="addr" type="text"></FormInput>
+            </FormAwesome>
+
         </div>
 
 
