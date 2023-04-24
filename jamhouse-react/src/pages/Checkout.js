@@ -153,7 +153,12 @@ export default function Checkout() {
   }
 
   function buyBasket() {
-    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData}, {headers:{ "Authorization": `Token ${accessToken}`}})
+    let headers = {};
+    if (accessToken && accessToken.length > 0) {
+      headers = { headers:{ "Authorization": `Token ${accessToken}`}}
+    }
+
+    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData}, headers)
     .then((response) => {
       console.log(response);
       setCheckoutError("");
