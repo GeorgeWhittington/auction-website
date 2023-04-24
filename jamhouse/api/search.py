@@ -6,9 +6,9 @@ from api.serializers import ItemSerializer
 from api.paginators import SmallPagePagination
 
 
-def enforce_int(value):
+def enforce_float(value):
     try:
-        return int(value)
+        return float(value)
     except (ValueError, TypeError):
         return None
 
@@ -18,8 +18,8 @@ class Search(APIView, SmallPagePagination):
 
     def get(self, request):
         term = request.query_params.get("query")
-        min_price = enforce_int(request.query_params.get("min-price"))
-        max_price = enforce_int(request.query_params.get("max-price"))
+        min_price = enforce_float(request.query_params.get("min-price"))
+        max_price = enforce_float(request.query_params.get("max-price"))
         sort_by = request.query_params.get("sort-by", "new")
 
         if not term:

@@ -127,12 +127,24 @@ function Search() {
 
   function handleParamChange(event) {
     let filter = event.target.id;
+    let value = event.target.value;
+
+    console.log(value);
+
+    if (filter === "min-price" || filter === "max-price") {
+      if (value.includes("-")) {
+        value = value.replace("-", "");
+      } else if (value.includes("+")) {
+        value = value.replace("+", "");
+      }
+    }
+
     if (filter === "min-price") {
-      setSearchParams({...searchParams, "min-price": event.target.value});
+      setSearchParams({...searchParams, "min-price": value});
     } else if (filter === "max-price") {
-      setSearchParams({...searchParams, "max-price": event.target.value});
+      setSearchParams({...searchParams, "max-price": value});
     } else if (filter === "sort-by") {
-      setSearchParams({...searchParams, "sort-by": event.target.value});
+      setSearchParams({...searchParams, "sort-by": value});
     }
     setItems([]);
     setNext(1);
