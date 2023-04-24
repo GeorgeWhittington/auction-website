@@ -64,6 +64,7 @@ def buy(item_ids: list, set_ids: list, user: User, email_address: str) -> bool:
 
     for s in set_qs:
         order.sets.add(s)
+        s.create_replacement()
 
     order.save()
 
