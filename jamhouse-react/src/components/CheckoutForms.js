@@ -11,7 +11,7 @@ function FormInput({id, addressData, handleAddressChange, error}) {
   } else if (id === "saveAddress") {
     return (
       <div>
-        <label htmlFor="save-address">{fieldNames[id]}:</label>
+        <label htmlFor={id}>{fieldNames[id]}:</label>
         <input
           id="save-address" name="save-address"
           type="checkbox" checked={addressData[id]}
@@ -65,7 +65,7 @@ function MinimiseableForm({minimised, setMinimised, form, title}) {
   }
 }
 
-function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit }) {
+function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit, loggedIn }) {
   function testEmptyOrNumeric(value) {
     return value === "" || numberRegex.test(value);
   }
@@ -114,6 +114,12 @@ function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit }
     });
   }
 
+  function handleSaveCardChange(e) {
+    setPaymentData((prevData) => {
+      return {...prevData, saveCard: !prevData.saveCard};
+    })
+  }
+
   return (
     <div id="payment-form">
       <FormErrors error={error} />
@@ -147,6 +153,17 @@ function PaymentForm({ paymentData, error, setPaymentData, handlePaymentSubmit }
           type="text" placeholder="Security Code"
           value={paymentData.securityCode} onChange={handleSecurityCodeChange}
           maxLength={3} className={error.invalidFields.includes("securityCode") ? "form-error" : ""} />
+        { loggedIn ?
+          <div>
+            <label htmlFor="save-card">Save Card:</label>
+            <input
+              id="save-card" name="save-card"
+              type="checkbox" checked={paymentData.saveCard}
+              onChange={handleSaveCardChange}
+            />
+          </div>
+        : ""
+        }
         <div>
           <button type="button" onClick={handlePaymentSubmit}>Buy Now</button>
         </div>

@@ -54,7 +54,7 @@ export default function Checkout() {
   const [paymentData, setPaymentData] = useState({
     cardNumber: "", name: "",
     expirationMonth: "", expirationYear: "",
-    securityCode: ""
+    securityCode: "", saveCard: false
   });
   const [paymentError, setPaymentError] = useState({
     messages: [], invalidFields: []
@@ -306,7 +306,8 @@ export default function Checkout() {
   const paymentForm = <PaymentForm
     paymentData={paymentData} error={paymentError}
     setPaymentData={setPaymentData}
-    handlePaymentSubmit={handlePaymentSubmit} />
+    handlePaymentSubmit={handlePaymentSubmit}
+    loggedIn={loggedIn} />
 
   // TODO: check error code, render stuff differently?
 
