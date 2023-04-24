@@ -20,7 +20,7 @@ class Me(APIView):
     queryset = User.objects.none()
 
     def get(self, request):
-        current_user = User.objects.get(id=request.user.id)
+        current_user = request.user
 
         res = {
             'username' : current_user.username,
@@ -31,6 +31,7 @@ class Me(APIView):
 
         if 'v' in request.query_params:
             checkout_info = {}
+
             if hasattr(current_user, 'checkoutinfo'):
                 checkout_info = json.loads(JSONRenderer().render(CheckoutInfoSerializer(current_user.checkoutinfo, many=False, context={"request": request}).data))
 

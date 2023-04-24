@@ -241,19 +241,48 @@ export default function Checkout() {
       return;
     }
 
-    axios.get(api + "/me", {params: {v: ""}, headers: {"Authorization": `Token ${accessToken}`}})
+    axios.get(api + "/me", {params: {v: 1}, headers: {"Authorization": `Token ${accessToken}`}})
     .then((request) => {
       console.log(request.data);
-      if (request.data.email && request.data.first_name && request.data.last_name) {
-        setLoggedIn(true);
+      const user = request.data;
+      setLoggedIn(true);
+
+      setAddressData((prev) => {
+        return {
+          ...prev,
+          email: user.email,
+          fName: user.first_name,
+          lName: user.last_name
+        };
+      });
+
+      const addressFields = ["addr_address", "addr_city", "addr_country", "addr_county", "addr_postcode"];
+      const paymentFields = ["card_cvc", "card_exp_month", "card_exp_year", "card_name", "card_number"];
+
+      if (addressFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) })) {
         setAddressData((prev) => {
           return {
             ...prev,
-            email: request.data.email,
-            fName: request.data.first_name,
-            lName: request.data.last_name
-          };
-        });
+            address: user.checkout_info.addr_address,
+            city: user.checkout_info.addr_city,
+            country: user.checkout_info.addr_country,
+            county: user.checkout_info.addr_county,
+            postcode: user.checkout_info.addr_postcode,
+          }
+        })
+      }
+
+      if (paymentFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) })) {
+        setPaymentData((prev) => {
+          return {
+            ...prev,
+            cardNumber: String(user.checkout_info.card_number),
+            name: user.checkout_info.card_name,
+            expirationMonth: String(user.checkout_info.card_exp_month),
+            expirationYear: String(user.checkout_info.card_exp_year),
+            securityCode: String(user.checkout_info.card_cvc),
+          }
+        })
       }
     }).catch((error) => {
       // Not logged in
