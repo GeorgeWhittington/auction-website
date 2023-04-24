@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 from rest_framework import permissions, generics
 
-from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer
-from shop.models import Item, Set, Order, OrderStatus
+from api.serializers import RegisterSerializer, ItemSerializer, SetSerializer, ImageSerializer, CheckoutInfoSerializer
+from shop.models import Item, Set, Order, OrderStatus, CheckoutInfo
 from api.checkout import checkout_calculate
 from api.buy import buy
 from api.validate import ValidationStatus, validate_card, validate_address
@@ -30,9 +30,13 @@ class Me(APIView):
         }
 
         if 'v' in request.query_params:
+            checkout_info = {}
+            if hasattr(request.user, 'checkoutinfo'):
+                checkout_info = json.loads(JSONRenderer().render(CheckoutInfoSerializer(current_user.checkoutinfo, many=False, context={"request": request}).data))
+
             res['first_name'] = current_user.first_name
             res['last_name'] = current_user.last_name
-
+            res['checkout_info'] = checkout_info
         return JsonResponse(res, safe=False)
 
 
@@ -186,6 +190,30 @@ class BuyView(APIView):
             item_ids = request.data['items']
         if 'sets' in request.data:
             set_ids = request.data['sets']
+
+        # Save address and card details for next time
+        if not request.user.is_anonymous:
+            save_address = bool(request.data['addressData']['saveAddress'])
+            save_card = bool(request.data['paymentData']['saveCard'])
+
+            if not hasattr(request.user, 'checkoutinfo'):
+                request.user.checkoutinfo = CheckoutInfo()
+
+            if save_address:
+                request.user.checkoutinfo.addr_address = request.data['addressData']['address']
+                request.user.checkoutinfo.addr_city = request.data['addressData']['city']
+                request.user.checkoutinfo.addr_country = request.data['addressData']['country']
+                request.user.checkoutinfo.addr_county = request.data['addressData']['county']
+                request.user.checkoutinfo.addr_postcode = request.data['addressData']['postcode']
+
+            if save_card:
+                request.user.checkoutinfo.card_number = request.data['paymentData']['cardNumber']
+                request.user.checkoutinfo.card_name = request.data['paymentData']['name']
+                request.user.checkoutinfo.card_exp_month = request.data['paymentData']['expirationMonth']
+                request.user.checkoutinfo.card_exp_year = request.data['paymentData']['expirationYear']
+                request.user.checkoutinfo.card_cvc = request.data['paymentData']['securityCode']
+
+            request.user.checkoutinfo.save()
 
         email = request.data['addressData']['email']
         current_user = request.user
