@@ -65,7 +65,7 @@ export default function Checkout() {
 
   const [cookies, setCookie, removeCookie] = useCookies(["basket"]);
   const [accessToken, setAccessToken] = useState(cookies["access-token"]);
-  
+
   const navigate = useNavigate();
 
   const basketCookie = cookies["basket"];
@@ -78,6 +78,11 @@ export default function Checkout() {
     if (length !== basketLength) {
       setBasketLength(length);
     }
+  }
+
+  const accessTokenCookie = cookies["access-token"];
+  if (accessToken != accessTokenCookie) {
+    setAccessToken(accessTokenCookie);
   }
 
   function handleAddressChange(event, field) {
@@ -232,6 +237,23 @@ export default function Checkout() {
       navigate("/");
       return;
     }
+
+    axios.get(api + "/me", {params: {v: ""}, headers: {"Authorization": `Token ${accessToken}`}})
+    .then((request) => {
+      console.log(request.data);
+      if (request.data.email && request.data.first_name && request.data.last_name) {
+        setAddressData((prev) => {
+          return {
+            ...prev,
+            email: request.data.email,
+            fName: request.data.first_name,
+            lName: request.data.last_name
+          };
+        })
+      }
+    }).catch((error) => {
+      // Not logged in
+    })
 
     axios.post(api + "/checkout", basket)
     .then((response) => {
