@@ -259,7 +259,7 @@ export default function Checkout() {
       const addressFields = ["addr_address", "addr_city", "addr_country", "addr_county", "addr_postcode"];
       const paymentFields = ["card_cvc", "card_exp_month", "card_exp_year", "card_name", "card_number"];
 
-      if (addressFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) })) {
+      if (addressFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) && user.checkout_info[prop] !== null })) {
         setAddressData((prev) => {
           return {
             ...prev,
@@ -272,7 +272,7 @@ export default function Checkout() {
         })
       }
 
-      if (paymentFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) })) {
+      if (paymentFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) && user.checkout_info[prop] !== null })) {
         setPaymentData((prev) => {
           return {
             ...prev,
