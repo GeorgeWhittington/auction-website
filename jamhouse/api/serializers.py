@@ -29,7 +29,7 @@ class SetSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Set
-        fields = ['id', 'description', 'price', 'items', 'sold']
+        fields = ['id', 'description', 'price', 'items', 'sold', 'price_individual_items']
 
 
 class RepositorySerializer(serializers.ModelSerializer):

@@ -37,6 +37,13 @@ class Set(models.Model):
     def sold(self):
         return bool(self.items.filter(sold_at__isnull=False).count())
 
+    def price_individual_items(self):
+        total = Decimal(0.0)
+        set_item_qs = Item.objects.filter(sets__in=[self.id,], sold_at__isnull=True)
+        for i in set_item_qs.all():
+            total += i.price
+        return total
+    
     def create_replacement(self):
         if self.archived:
             # A replacement set has already been created
