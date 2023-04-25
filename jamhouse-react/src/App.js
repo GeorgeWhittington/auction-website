@@ -28,6 +28,7 @@ import Checkout from "./pages/Checkout";
 import PostCheckout from "./pages/PostCheckout";
 import Orders from "./pages/Orders";
 import RecentlySold from "./pages/RecentlySold";
+import Locations from "./pages/Locations";
 import { testBasketValid } from "./basket";
 import { handlePress } from "./accessibleClick";
 
@@ -117,7 +118,7 @@ function App() {
           <div className="mobile-menu" onClick={handleMenuClick} onKeyDown={handleMenuPress} tabIndex="0"><FontAwesomeIcon icon={faBars} /></div>
           { user ? <Link to={"/orders"} className={menuHidden ? "hidden" : ""}>Your Orders</Link> : <></> }
           <Link to={"/about-us"} className={menuHidden ? "hidden" : ""}>About Us</Link>
-          <a href="#" className={menuHidden ? "hidden" : ""}>Locations</a>
+          <Link to={"/locations"} className={menuHidden ? "hidden" : ""}>Locations</Link>
           <Link to={"/recently-sold"} className={menuHidden ? "hidden" : ""}>Recently Sold</Link>
           <Link to={"/contact-us"} className={menuHidden ? "hidden" : ""}>Contact Us</Link>
         </nav>
@@ -137,6 +138,7 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/post-checkout" element={<PostCheckout />} />
           <Route path="/recently-sold" element={<RecentlySold />} />
+          <Route path="/locations" element={<Locations />} />
         </Routes>
       </div>
       <div id="footer">
