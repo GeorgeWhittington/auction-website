@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { api } from "../constants";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
+
+import "./Set.css";
+
 function Set() {
     const [set, setSet] = useState(null);
 
@@ -13,8 +18,10 @@ function Set() {
     const [cookies, setCookie] = useCookies(["basket"]);
 
     function handleBasketClick() {
-      // if sold
-      // alert("This item has already been sold")
+      if (set.sold === true) {
+        alert("Set already sold")
+        return;
+      }
 
       let basket = cookies.basket;
       console.log(basket);
@@ -32,7 +39,10 @@ function Set() {
 
     function render_item_image(item) {
       if (item.images.length !== 0) {
-        return <img src={item.images[0].img}></img>
+        return <a href={`/item/${item.id}`}><img src={item.images[0].img} className="set-img"></img></a>
+      }
+      else {
+        return <a href={`/item/${item.id}`}><FontAwesomeIcon icon={faImage} className="set-imgmissing" /></a>
       }
     }
 
@@ -46,16 +56,25 @@ function Set() {
         })
     }, [])
 
-    return (
-        <div>
-            <h2>Set: {id}</h2>
-            <p>The data for a specific set, getting this info from the rest api</p>
-            <a href="#" onClick={handleBasketClick}>Add to basket</a>
-            { set !== null ?
-            set.items.map(render_item_image)
-            : "" }
-        </div>
-    );
+    if (set !== null) {
+      return (
+          <div>
+            <div class="set-desc">
+              <h2><u>{set.description}</u></h2>
+            </div>
+            <div class="imgbox">
+              { set !== null ?
+              set.items.map(render_item_image)
+              : "" }
+            </div>
+            <div className="set-pricebasket">
+              <p>Price: &nbsp;&nbsp; <strike className="red">£{set.price_individual_items}</strike> &nbsp;&nbsp; £{set.price}</p>
+              <p>Saves: £{set.price_individual_items-set.price}</p>
+              { set.sold ? <p className="set-sold">Set already sold</p> : <a href="#" onClick={handleBasketClick} className="set-button">Add to basket</a> }  
+            </div>
+          </div>
+      );
+    }
 }
 
 export default Set;
