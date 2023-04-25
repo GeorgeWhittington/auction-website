@@ -1,0 +1,13 @@
+#location-page .horizontal-display-inner{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+#location-page .horizontal-display ::-webkit-scrollbar {
+    display: none;
+}
+
+#location-page .horizontal-display > div {
+    justify-content: left !important;
+}

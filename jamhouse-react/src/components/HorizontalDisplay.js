@@ -49,7 +49,7 @@ export default function HorizontalDisplay({ items, title }) {
   return (
     <div className="horizontal-display">
       <h2>{title}</h2>
-      <div>
+      <div className="horizontal-display-inner">
         {
           items.map((item) => <ImageIcon key={item.id} item={item} />)
         }
