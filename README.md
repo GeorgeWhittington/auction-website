@@ -4,7 +4,7 @@ A website that allows auction houses to manage which items they have available, 
 
 ## Requirements/Installation - Django
 
-The project is split into two halves that build separately, this section describes what you need to do to run the backend Django website. The admin user for the example database that is included has the username "admin" and the password "password".
+The project is split into two halves that build separately, this section describes what you need to do to run the backend Django website. The admin user for the example database that is included has the username "admin@jamhouse.com" and the password "password".
 
 ### Running Django Server
 
