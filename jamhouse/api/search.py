@@ -1,32 +1,14 @@
-from django.core.paginator import EmptyPage
-from rest_framework.views import APIView, Response
+from rest_framework.views import APIView
 from rest_framework.exceptions import ParseError
-from rest_framework.pagination import PageNumberPagination
 
 from shop.models import Item
 from api.serializers import ItemSerializer
+from api.paginators import SmallPagePagination
 
 
-class SmallPagePagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 10
-
-    def get_paginated_response(self, data):
-        try:
-            next_page = self.page.next_page_number()
-        except EmptyPage:
-            next_page = None
-
-        return Response({
-            "next": next_page,
-            "count": self.page.paginator.count,
-            "results": data
-        })
-
-
-def enforce_int(value):
+def enforce_float(value):
     try:
-        return int(value)
+        return float(value)
     except (ValueError, TypeError):
         return None
 
@@ -36,8 +18,8 @@ class Search(APIView, SmallPagePagination):
 
     def get(self, request):
         term = request.query_params.get("query")
-        min_price = enforce_int(request.query_params.get("min-price"))
-        max_price = enforce_int(request.query_params.get("max-price"))
+        min_price = enforce_float(request.query_params.get("min-price"))
+        max_price = enforce_float(request.query_params.get("max-price"))
         sort_by = request.query_params.get("sort-by", "new")
 
         if not term:

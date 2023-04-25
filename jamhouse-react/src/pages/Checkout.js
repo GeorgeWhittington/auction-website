@@ -23,7 +23,11 @@ function CheckoutItem({ item, type }) {
   }
 
   if (item.hasOwnProperty("images") && item.images.length !== 0) {
-    var thumbnail = <img src={item.images[0].img} alt={item.images[0].alt} />
+    if (type == "set") {
+      var thumbnail = <img src={item.images.img} alt={item.images.alt} />
+    } else {
+      var thumbnail = <img src={item.images[0].img} alt={item.images[0].alt} />
+    }
   } else {
     var thumbnail = <FontAwesomeIcon icon={faImage} className="thumbnail" />
   }
@@ -45,7 +49,7 @@ export default function Checkout() {
   const [addressData, setAddressData] = useState({
     email: "", fName: "", lName: "",
     address: "", city: "", country: "",
-    county: "", postcode: ""
+    county: "", postcode: "", saveAddress: false
   });
   const [addressError, setAddressError] = useState({
     messages: [], invalidFields: []
@@ -54,7 +58,7 @@ export default function Checkout() {
   const [paymentData, setPaymentData] = useState({
     cardNumber: "", name: "",
     expirationMonth: "", expirationYear: "",
-    securityCode: ""
+    securityCode: "", saveCard: false
   });
   const [paymentError, setPaymentError] = useState({
     messages: [], invalidFields: []
@@ -65,7 +69,8 @@ export default function Checkout() {
 
   const [cookies, setCookie, removeCookie] = useCookies(["basket"]);
   const [accessToken, setAccessToken] = useState(cookies["access-token"]);
-  
+  const [loggedIn, setLoggedIn] = useState(false);
+
   const navigate = useNavigate();
 
   const basketCookie = cookies["basket"];
@@ -80,10 +85,19 @@ export default function Checkout() {
     }
   }
 
+  const accessTokenCookie = cookies["access-token"];
+  if (accessToken != accessTokenCookie) {
+    setAccessToken(accessTokenCookie);
+  }
+
   function handleAddressChange(event, field) {
     setAddressData((prevData) => {
       let newData = {...prevData}
-      newData[field] = event.target.value;
+      if (field === "saveAddress") {
+        newData[field] = !newData[field];
+      } else {
+        newData[field] = event.target.value;
+      }
       return newData;
     });
   }
@@ -148,12 +162,15 @@ export default function Checkout() {
       setCheckoutError(`Error: ${status}!`);
       return;
     }
-
-    // after different errors, different ui should be minimised/maximised
   }
 
   function buyBasket() {
-    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData}, {headers:{ "Authorization": `Token ${accessToken}`}})
+    let headers = {};
+    if (accessToken && accessToken.length > 0) {
+      headers = { headers:{ "Authorization": `Token ${accessToken}`}}
+    }
+
+    axios.post(api + "/buy", {...basketCookie, addressData: addressData, paymentData: paymentData}, headers)
     .then((response) => {
       console.log(response);
       setCheckoutError("");
@@ -228,6 +245,53 @@ export default function Checkout() {
       return;
     }
 
+    axios.get(api + "/me", {params: {v: 1}, headers: {"Authorization": `Token ${accessToken}`}})
+    .then((request) => {
+      console.log(request.data);
+      const user = request.data;
+      setLoggedIn(true);
+
+      setAddressData((prev) => {
+        return {
+          ...prev,
+          email: user.email,
+          fName: user.first_name,
+          lName: user.last_name
+        };
+      });
+
+      const addressFields = ["addr_address", "addr_city", "addr_country", "addr_county", "addr_postcode"];
+      const paymentFields = ["card_cvc", "card_exp_month", "card_exp_year", "card_name", "card_number"];
+
+      if (addressFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) && user.checkout_info[prop] !== null })) {
+        setAddressData((prev) => {
+          return {
+            ...prev,
+            address: user.checkout_info.addr_address,
+            city: user.checkout_info.addr_city,
+            country: user.checkout_info.addr_country,
+            county: user.checkout_info.addr_county,
+            postcode: user.checkout_info.addr_postcode,
+          }
+        })
+      }
+
+      if (paymentFields.every((prop) => { return user.checkout_info.hasOwnProperty(prop) && user.checkout_info[prop] !== null })) {
+        setPaymentData((prev) => {
+          return {
+            ...prev,
+            cardNumber: String(user.checkout_info.card_number),
+            name: user.checkout_info.card_name,
+            expirationMonth: String(user.checkout_info.card_exp_month),
+            expirationYear: String(user.checkout_info.card_exp_year),
+            securityCode: String(user.checkout_info.card_cvc),
+          }
+        })
+      }
+    }).catch((error) => {
+      // Not logged in
+    })
+
     axios.post(api + "/checkout", basket)
     .then((response) => {
       setCheckoutData(response.data);
@@ -270,11 +334,13 @@ export default function Checkout() {
   const addressForm = <AddressForm
     addressData={addressData} error={addressError}
     handleAddressChange={handleAddressChange}
-    handleAddressSubmit={handleAddressSubmit} />
+    handleAddressSubmit={handleAddressSubmit}
+    loggedIn={loggedIn} />
   const paymentForm = <PaymentForm
     paymentData={paymentData} error={paymentError}
     setPaymentData={setPaymentData}
-    handlePaymentSubmit={handlePaymentSubmit} />
+    handlePaymentSubmit={handlePaymentSubmit}
+    loggedIn={loggedIn} />
 
   // TODO: check error code, render stuff differently?
 

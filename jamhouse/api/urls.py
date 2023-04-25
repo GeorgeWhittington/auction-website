@@ -6,7 +6,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 from shop.models import Item, Set, Repository, Image, Order
 from api.search import Search
-from api.views import Me, RegisterView, CheckoutView, BuyView, OrderCancelView, UpdateNameView, UpdateEmailView, UpdatePasswordView
+from api.views import Me, RegisterView, CheckoutView, BuyView, OrderCancelView, UpdateNameView, UpdateEmailView, UpdatePasswordView, UpdateAddressView, RecentlySold
 from api.serializers import ItemSerializer, SetSerializer, RepositorySerializer, ImageSerializer, OrderSerializer
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -32,7 +32,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Order.objects.filter(user=self.request.user)
-        
+
         for order in qs:
             order.update_status()
 
@@ -62,4 +62,6 @@ urlpatterns = [
     path('update-name', UpdateNameView.as_view()),
     path('update-email', UpdateEmailView.as_view()),
     path('update-password', UpdatePasswordView.as_view()),
+    path('update-address', UpdateAddressView.as_view()),
+    path('recently-sold', RecentlySold.as_view()),
 ]

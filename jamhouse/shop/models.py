@@ -1,14 +1,30 @@
 import random
+from decimal import Decimal
 from enum import IntEnum
 from datetime import datetime, timezone
-
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
+
+class CheckoutInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    addr_address = models.CharField(max_length=128, blank=True, null=True)
+    addr_city = models.CharField(max_length=128, blank=True, null=True)
+    addr_country = models.CharField(max_length=128, blank=True, null=True)
+    addr_county = models.CharField(max_length=128, blank=True, null=True)
+    addr_postcode = models.CharField(max_length=10, blank=True, null=True)
+
+    card_number = models.IntegerField(blank=True, null=True)
+    card_name = models.CharField(max_length=128, blank=True, null=True)
+    card_exp_month = models.IntegerField(blank=True, null=True)
+    card_exp_year = models.IntegerField(blank=True, null=True)
+    card_cvc = models.IntegerField(blank=True, null=True)
 
 class Set(models.Model):
     description = models.CharField(max_length=128)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
     archived = models.BooleanField(default=False)
     items = models.ManyToManyField("Item", through="Item_sets", blank=True)
 
@@ -21,6 +37,13 @@ class Set(models.Model):
     def sold(self):
         return bool(self.items.filter(sold_at__isnull=False).count())
 
+    def price_individual_items(self):
+        total = Decimal(0.0)
+        set_item_qs = Item.objects.filter(sets__in=[self.id,], sold_at__isnull=True)
+        for i in set_item_qs.all():
+            total += i.price
+        return total
+    
     def create_replacement(self):
         if self.archived:
             # A replacement set has already been created
@@ -63,10 +86,9 @@ class Set(models.Model):
 
         return new_set
 
-
 class Item(models.Model):
     description = models.CharField(max_length=128)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
     sold_at = models.DateTimeField(null=True, blank=True)
     sets = models.ManyToManyField("Set", blank=True)
     repositories = models.ManyToManyField("Repository", blank=True)
@@ -90,8 +112,8 @@ class Repository(models.Model):
         return self.name
 
 class Image(models.Model):
-    alt = models.TextField(blank=True)
-    img = models.ImageField(upload_to="", blank=True)
+    alt = models.TextField(blank=False)
+    img = models.ImageField(upload_to="", blank=False)
 
     def __str__(self) -> str:
         return str(self.img)

@@ -3,9 +3,13 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
-from shop.models import Item, Set, Repository, Image, Order
+from shop.models import Item, Set, Repository, Image, Order, CheckoutInfo
 
-
+class CheckoutInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CheckoutInfo
+        fields = ['addr_address', 'addr_city', 'addr_country', 'addr_county', 'addr_postcode', 'card_number', 'card_name', 'card_exp_month', 'card_exp_year', 'card_cvc']
+        
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
@@ -25,7 +29,7 @@ class SetSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Set
-        fields = ['id', 'description', 'price', 'items', 'sold']
+        fields = ['id', 'description', 'price', 'items', 'sold', 'price_individual_items']
 
 
 class RepositorySerializer(serializers.ModelSerializer):

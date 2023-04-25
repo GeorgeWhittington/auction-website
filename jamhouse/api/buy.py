@@ -4,11 +4,11 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
 from api.validate import Validation, ValidationStatus, validate_checkout_items, validate_checkout_sets
 
-def send_order_email(order):
-    subject, from_email, to = f'Your order has been placed #{order.number}', 'jamhouse.noreply@gmail.com', order.user.email
+def send_order_email(order, email_address):
+    subject, from_email, to = f'Your order has been placed #{order.number}', 'jamhouse.noreply@gmail.com', email_address
 
     html_content = f''' <h3>Order #{order.number}</h3>
-                        <p>Hello {order.user.first_name}, this email is confirmation that your order has been placed.</p>
+                        <p>Hello, this email is confirmation that your order has been placed.</p>
                     '''
     if order.items.count() > 0:
         html_content += "<table>"
@@ -32,7 +32,7 @@ def buy_item(item: Item):
     item.sold_at = datetime.now()
     item.save()
 
-def buy(item_ids: list, set_ids: list, user: User) -> bool:
+def buy(item_ids: list, set_ids: list, user: User, email_address: str) -> bool:
 
     # validate items
     validation = validate_checkout_items(item_ids)
@@ -51,7 +51,9 @@ def buy(item_ids: list, set_ids: list, user: User) -> bool:
     
     order = Order()
     order.save()
-    order.user = user
+
+    if not user.is_anonymous:
+        order.user = user
     
     for i in item_qs:
         buy_item(i)
@@ -62,10 +64,11 @@ def buy(item_ids: list, set_ids: list, user: User) -> bool:
 
     for s in set_qs:
         order.sets.add(s)
+        s.create_replacement()
 
     order.save()
 
     # Send a cheeky email
-    send_order_email(order)
+    send_order_email(order, email_address)
 
     return Validation(ValidationStatus.SUCCESS)
