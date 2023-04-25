@@ -1,6 +1,6 @@
 **/venv
 **/__pycache__
 *.DS_Store
-jamhouse/media/*.jpg
-jamhouse/media/*.jpeg
-jamhouse/media/*.png
+#jamhouse/media/*.jpg
+#jamhouse/media/*.jpeg
+#jamhouse/media/*.png
