@@ -62,14 +62,14 @@ function Set() {
             <div class="set-desc">
               <h2><u>{set.description}</u></h2>
             </div>
-            <p>Debug Set ID: {id}</p>
             <div class="imgbox">
               { set !== null ?
               set.items.map(render_item_image)
               : "" }
             </div>
             <div className="set-pricebasket">
-              <p>Price: £{set.price}</p>
+              <p>Price: &nbsp;&nbsp; <strike className="red">£{set.price_individual_items}</strike> &nbsp;&nbsp; £{set.price}</p>
+              <p>Saves: £{set.price_individual_items-set.price}</p>
               { set.sold ? <p className="set-sold">Set already sold</p> : <a href="#" onClick={handleBasketClick} className="set-button">Add to basket</a> }  
             </div>
           </div>
