@@ -1,0 +1,140 @@
+.set-img {
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    height: 200px;
+    margin: 5px;
+    width: auto    
+  }
+
+.set-imgmissing{
+    color: gray;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    height: 200px;
+    margin: 5px;
+    width: auto
+  }
+
+.imgbox {
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+.imgbox div {
+    width: 100px;
+    height: 100px;
+  }
+
+.descbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.descbox div {
+    width: 100px;
+    height: 100px;
+}
+
+.set-pricebasket {
+    display: flex;
+    align-items: end;
+    flex-direction: column;
+    margin: 4px 2px;
+}
+
+.set-button {
+    background-color: #7C0A02;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.set-sold {
+    font-size: small;
+    background-color: #7c0a0277;
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    text-decoration: none;
+    width: fit-content;
+}
+
+/*Mobile Phone CSS*/
+
+@media (max-width: 1250px) {
+    .set-img {
+        border: 0.1px solid #ddd;
+        border-radius: 0.2px;
+        height: 100px;
+        margin: 1px;
+        width: auto    
+      }
+    
+    .set-imgmissing{
+        color: gray;
+        background: white;
+        border: 0.1px solid #ddd;
+        border-radius: 0.2px;
+        height: 100px;
+        margin: 1px;
+        width: auto
+      }
+    
+    .imgbox {
+        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    
+    .imgbox div {
+        width: 20px;
+        height: 20px;
+      }
+    
+    .set-desc {
+        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .set-desc div {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .set-pricebasket {
+        display: flex;
+        align-items: end;
+        flex-direction: column;
+        margin: 0.4px 0.2px;
+    }
+    
+    .set-button {
+        background-color: #7C0A02;
+        border: none;
+        color: white;
+        padding: 1.6px 3.2px;
+        text-decoration: none;
+        cursor: pointer;
+        width: fit-content;
+    }
+    
+    .set-sold {
+        font-size: small;
+        background-color: #7c0a0277;
+        border: none;
+        color: white;
+        padding: 1.6px 3.2px;
+        text-decoration: none;
+        width: fit-content;
+    }
+  }
